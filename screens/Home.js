@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Camera, CameraType } from 'expo-camera';
+import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
   const [startCamera, setStartCamera] = useState(false);
@@ -20,7 +21,6 @@ const Home = () => {
   const __takePicture = async () => {
     if (!camera) return;
     const photo = await camera.takePictureAsync();
-    console.log(photo);
     setPreviewVisible(true);
     setCapturedImage(photo);
   };
@@ -154,8 +154,14 @@ const styles = StyleSheet.create({
   },
 });
 
+const photos = [];
+let id = 0;
+
 const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
-  console.log('sdsfds', photo);
+  const navigation = useNavigation();
+
+  photos.push({ id: ++id, ...photo });
+
   return (
     <View
       style={{
@@ -219,6 +225,7 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
                   color: '#fff',
                   fontSize: 20,
                 }}
+                onPress={() => navigation.navigate('Localization', { photos })}
               >
                 save photo
               </Text>
