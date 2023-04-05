@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 
-const Localization = ({ photos }) => {
+const Localization = ({ route }) => {
+  const { photos } = route.params;
   console.log(photos);
   return (
     <View style={styles.container}>
       <Text>Photos</Text>
-
-      {/* {photos.map((photo) => (
+      {photos.map((photo) => (
         <Image
           style={styles.tinyLogo}
           key={photo.id}
@@ -15,7 +15,7 @@ const Localization = ({ photos }) => {
             uri: photo.uri,
           }}
         />
-      ))} */}
+      ))}
     </View>
   );
 };

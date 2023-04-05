@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './screens/Home';
 import Recognition from './screens/CameraTest';
 import Localization from './screens/Localization';
+import Map from './screens/Map';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +19,7 @@ function MyTabs() {
         })}
       />
       <Tab.Screen name="Localization" component={Localization} />
+      <Tab.Screen name="Map" component={Map} />
     </Tab.Navigator>
   );
 }
