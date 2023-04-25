@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Camera, CameraType } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 
-const Home = () => {
+const FacialRecognition = () => {
   const [startCamera, setStartCamera] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
@@ -44,7 +44,11 @@ const Home = () => {
           }}
         >
           {previewVisible && capturedImage ? (
-            <CameraPreview photo={capturedImage} savePhoto={__savePhoto} retakePicture={__retakePicture} />
+            <CameraPreview
+              photo={capturedImage}
+              savePhoto={__savePhoto}
+              retakePicture={__retakePicture}
+            />
           ) : (
             <Camera
               style={{ flex: 1 }}
@@ -123,6 +127,7 @@ const Home = () => {
               justifyContent: 'center',
               alignItems: 'center',
               height: 50,
+              marginBottom: 6,
             }}
           >
             <Text
@@ -132,7 +137,29 @@ const Home = () => {
                 textAlign: 'center',
               }}
             >
-              Start Facial Recognition
+              Register
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={__startCamera}
+            style={{
+              width: 130,
+              borderRadius: 4,
+              backgroundColor: '#14274e',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 50,
+            }}
+          >
+            <Text
+              style={{
+                color: '#fff',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+            >
+              Login
             </Text>
           </TouchableOpacity>
         </View>
@@ -143,7 +170,7 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default FacialRecognition;
 
 const styles = StyleSheet.create({
   container: {

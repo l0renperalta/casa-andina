@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from './screens/Home';
+import FacialRecognition from './screens/FacialRecognition';
 import Recognition from './screens/CameraTest';
 import Localization from './screens/Localization';
 import Map from './screens/Map';
@@ -12,8 +12,8 @@ function MyTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="FacialRecognition"
+        component={FacialRecognition}
         options={({ navigation }) => ({
           headerTitle: 'Casa Andina',
         })}
