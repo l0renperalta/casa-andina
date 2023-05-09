@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import FacialRecognition from './screens/FacialRecognition';
 import Recognition from './screens/CameraTest';
 import Localization from './screens/Localization';
 import Map from './screens/Map';
+import FacialRecognition from './screens/FacialRecognition';
 
 const Tab = createBottomTabNavigator();
 
-function MyTabs() {
+function TabsNavigations() {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -27,7 +27,7 @@ function MyTabs() {
 export default function App() {
   return (
     <NavigationContainer>
-      <MyTabs />
+      <TabsNavigations />
     </NavigationContainer>
   );
 }

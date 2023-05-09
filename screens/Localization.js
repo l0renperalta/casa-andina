@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Button, Text, View, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const Localization = ({ route }) => {
+  const navigation = useNavigation();
   // const [data, setData] = useState([]);
 
   // useEffect(() => {
@@ -31,6 +33,7 @@ const Localization = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text>Photos</Text>
+      <Button title="Go to Profile" onPress={() => navigation.navigate('Map')} />
       {/* {data.map((e) => (
         <Text key={e.id}>{e.titleCar}</Text>
       ))} */}
