@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Recognition from './screens/CameraTest';
-import Localization from './screens/Localization';
+import CameraRoll from './screens/CameraRoll';
 import Map from './screens/Map';
 import FacialRecognition from './screens/FacialRecognition';
 
@@ -18,7 +17,7 @@ function TabsNavigations() {
           headerTitle: 'Casa Andina',
         })}
       />
-      <Tab.Screen name="Localization" component={Localization} />
+      <Tab.Screen name="CameraRoll" component={CameraRoll} />
       <Tab.Screen name="Map" component={Map} />
     </Tab.Navigator>
   );

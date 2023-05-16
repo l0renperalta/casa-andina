@@ -1,27 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const { LocationClient, GetDevicePositionHistoryCommand } = require('@aws-sdk/client-location');
+const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('./config');
 
 router.get('/location', async (req, res) => {
-  const config = {
-    region: 'us-east-1',
-    // credentials: {
-    //   accessKeyId: 'TU_ACCESS_KEY_ID',
-    //   secretAccessKey: 'TU_SECRET_ACCESS_KEY',
-    // },
-  };
+  try {
+    const client = new LocationClient({
+      region: AWS_REGION,
+      credentials: {
+        accessKeyId: ACCESS_KEY,
+        secretAccessKey: SECRET_ACCESS_KEY,
+      },
+    });
 
-  const client = new LocationClient(config);
+    const command = new GetDevicePositionHistoryCommand({
+      TrackerName: 'TransportTracker', // required
+      DeviceId: 'miDeviceId', // required
+    });
 
-  const input = {
-    // GetDevicePositionHistoryRequest
-    TrackerName: 'TransportTracker', // required
-    DeviceId: 'STRING_VALUE', // required
-  };
-
-  const command = new GetDevicePositionHistoryCommand(input);
-  const response = await client.send(command);
-  res.json(response);
+    const response = await client.send(command);
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;
