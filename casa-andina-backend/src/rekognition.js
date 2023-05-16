@@ -113,3 +113,7 @@ module.exports = router;
 // CreateCollecion
 // IndexFaces
 // SearchFaceByImage
+
+// AWS_REGION = us-east-2
+// ACCESS_KEY = AKIAXFLWPONCC6QFXVVO
+// SECRET_ACCESS_KEY = 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
