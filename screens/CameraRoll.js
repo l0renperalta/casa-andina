@@ -5,8 +5,8 @@ import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 
 const CameraRoll = ({ route }) => {
+  const URI = 'http://192.168.1.2:5000/';
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions(true);
-
   const navigation = useNavigation();
   const [data, setData] = useState({});
 
@@ -75,12 +75,14 @@ const CameraRoll = ({ route }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <Text>{}</Text>
-        {data['$metadata']?.httpStatusCode === 200 ? (
+        {/* {data['$metadata']?.httpStatusCode === 200 ? (
           <Text>{data.SearchedFaceConfidence}</Text>
         ) : data['$metadata']?.httpStatusCode === 400 ? (
           <Text>Error 400: Solicitud incorrecta</Text>
-        ) : null}
+        ) : null} */}
+
+        {data.faceFound && <Text>Face found! you can access!!</Text>}
+        {!data.faceFound && <Text>Face not found</Text>}
 
         {/* {data['$metadata']?.httpStatusCode === 200 && <Text>{data.SearchedFaceConfidence}</Text>} */}
       </View>
@@ -99,7 +101,7 @@ const CameraRoll = ({ route }) => {
         type: 'image/jpg',
       });
 
-      const response = await fetch('http://192.168.1.4:5000/indexFaces', {
+      const response = await fetch(URI + 'indexFaces', {
         method: 'POST',
         body: formData,
         headers: {
@@ -126,7 +128,7 @@ const CameraRoll = ({ route }) => {
         type: 'image/jpg',
       });
 
-      const response = await fetch('http://192.168.1.4:5000/searchFaceByImage', {
+      const response = await fetch(URI + 'searchFaceByImage', {
         method: 'POST',
         body: formData,
         headers: {
@@ -136,6 +138,7 @@ const CameraRoll = ({ route }) => {
 
       const data = await response.json();
       setData(data);
+      console.log(data);
     } catch (error) {
       console.log('Error:', error);
     }

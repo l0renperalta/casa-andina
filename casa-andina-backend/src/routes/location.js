@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { LocationClient, GetDevicePositionHistoryCommand } = require('@aws-sdk/client-location');
-const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('./config');
+const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../config');
 
 router.get('/location', async (req, res) => {
   try {

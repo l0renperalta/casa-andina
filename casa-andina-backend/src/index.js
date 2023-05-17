@@ -16,7 +16,7 @@ app.use(
 app.set('port', 5000);
 app.use(cors('dev'));
 
-app.use(require('./location'));
-app.use(require('./rekognition'));
+app.use(require('./routes/location'));
+app.use(require('./routes/rekognition'));
 
 app.listen(app.get('port'), () => console.log(`Server listening on port ${app.get('port')}`));
