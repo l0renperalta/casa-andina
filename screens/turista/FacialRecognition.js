@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Camera, CameraType } from 'expo-camera';
-import CameraPreview from '../components/CameraPreview';
+import CameraPreview from '../../components/CameraPreview';
 import { useNavigation } from '@react-navigation/native';
 
 const FacialRecognition = () => {
