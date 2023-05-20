@@ -12,11 +12,14 @@ import CameraRoll from './turista/CameraRoll';
 import Map from './turista/Map';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Inicio from './conductor/Inicio';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function Home() {
+function Home({ route }) {
+  const { type } = route.params;
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -35,6 +38,7 @@ function Home() {
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} />,
         }}
+        initialParams={{ type: type }}
       />
       <Tab.Screen
         name="FacialRecognition"
@@ -55,6 +59,14 @@ function Home() {
   );
 }
 
+function Conductor() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Inicio" component={Inicio} />
+    </Tab.Navigator>
+  );
+}
+
 const Welcome = () => {
   return (
     <NavigationContainer>
@@ -64,6 +76,7 @@ const Welcome = () => {
         <Stack.Screen name="RegistrarTurista" component={RegistrarTurista} />
         <Stack.Screen name="RegistrarConductor" component={RegistrarConductor} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Conductor" component={Conductor} />
       </Stack.Navigator>
     </NavigationContainer>
   );

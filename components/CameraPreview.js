@@ -46,10 +46,10 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
               <Text
                 style={{
                   color: '#fff',
-                  fontSize: 20,
+                  fontSize: 15,
                 }}
               >
-                Re-take
+                Volver a intentar
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -64,30 +64,11 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
               <Text
                 style={{
                   color: '#fff',
-                  fontSize: 20,
+                  fontSize: 15,
                 }}
                 onPress={() => navigation.navigate('CameraRoll', { photo })}
               >
-                save photo
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: 130,
-                height: 40,
-
-                alignItems: 'center',
-                borderRadius: 4,
-              }}
-            >
-              <Text
-                style={{
-                  color: '#fff',
-                  fontSize: 20,
-                }}
-                onPress={() => navigation.navigate('')}
-              >
-                go back
+                Continuar
               </Text>
             </TouchableOpacity>
           </View>

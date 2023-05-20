@@ -13,7 +13,10 @@ const Login = ({ navigation }) => {
       navigation.navigate('Admin');
     }
     if (values.user === 'Rony' && values.password === 'rony') {
-      navigation.navigate('Home');
+      navigation.navigate('Home', { type: 'turista' });
+    }
+    if (values.user === 'Conductor' && values.password === 'conductor') {
+      navigation.navigate('Home', { type: 'conductor' });
     }
     console.log(values);
   };

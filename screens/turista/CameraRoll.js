@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 
 const CameraRoll = ({ route }) => {
-  const URI = 'http://192.168.1.2:5000/';
+  const URI = 'http://192.168.1.5:5000/';
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions(true);
   const navigation = useNavigation();
   const [data, setData] = useState({});
