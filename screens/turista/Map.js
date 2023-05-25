@@ -1,15 +1,20 @@
 import { StyleSheet, Text, View, TextInput, Modal, Pressable } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
+import ModalComponent from '../../components/ModalComponent';
 
 const Map = ({ route }) => {
+  const URI = 'http://192.168.1.2:5000/';
   const [location, setLocation] = useState(null);
   const [locationLoaded, setLocationLoaded] = useState(false);
-  const [markers, setMarkers] = useState([]);
-  const [contador, setContador] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const { type } = route.params;
+  const [destination, setDestination] = useState({
+    latitude: -16.401589443979947,
+    longitude: -71.53376181416482,
+  });
+  const [transportPositions, setTransportPositions] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -23,50 +28,21 @@ const Map = ({ route }) => {
       setLocation(location.coords);
       setLocationLoaded(true);
     })();
+
+    (async () => {
+      const response = await fetch(URI + 'getPositions', {
+        method: 'GET',
+      });
+      const { positions } = await response.json();
+      setTransportPositions(positions);
+    })();
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Añadir un nuevo objeto al arreglo
-      setMarkers((prevObjetos) => [
-        ...prevObjetos,
-        {
-          latitude: -16.39730485879827,
-          longitude: -71.53299274773156 + contador + 1,
-        },
-      ]);
-      setContador((prevContador) => prevContador + 0.0003);
-    }, 3000);
-
-    // Limpiar el intervalo cuando el componente se desmonte
-    return () => clearInterval(interval);
-  }, [contador]);
 
   return (
     <View style={{ flex: 1 }}>
-      <Modal animationType="slide" transparent={true} visible={isVisible}>
-        <View style={styles.modalContent}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.text}>Ubicacion: </Text>
-            <Text style={styles.text}>Destino: </Text>
-            <View flexDirection="row">
-              <Text style={styles.button} backgroundColor="#ffac1c">
-                Adquirir servicio
-              </Text>
-              <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => setIsVisible(false)}>
-                Reservar servicio
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.title}>Datos del conductor</Text>
-          <Text style={styles.text}>Conductor: </Text>
-          <Text style={styles.text}>Color: </Text>
-          <Text style={styles.text}>Placa: </Text>
-          <Text style={styles.text}>Modelo: </Text>
-        </View>
-      </Modal>
+      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} />
       <View style={styles.container}>
-        <Text style={styles.text}>Jack Lemonade {type}</Text>
+        <Text style={styles.text}>Hello {type}!</Text>
         <Text style={styles.text} onPress={() => setIsVisible(true)}>
           Where do you want to go?
         </Text>
@@ -90,16 +66,26 @@ const Map = ({ route }) => {
             title="You are here"
             description="This is your current location"
           />
-          {/* {markers.map((marker) => (
+          <Marker
+            coordinate={destination}
+            title="Your distination"
+            description="This is your destination location"
+            onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
+            draggable
+          />
+          {transportPositions.map((marker, index) => (
             <Marker
+              key={index}
               coordinate={{
-                latitude: marker.latitude,
-                longitude: marker.longitude,
+                latitude: marker.Position[0],
+                longitude: marker.Position[1],
               }}
-              title="You are here"
-              description="This is your current location"
+              title="Your distination"
+              description="This is your destination location"
             />
-          ))} */}
+          ))}
+          {/* {console.log(transportPositions[0].Position[0], transportPositions[0].Position[1])} */}
+          <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} />
         </MapView>
       )}
       {!locationLoaded && <Text>Turn on your location</Text>}

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { useState } from 'react';
+import { loginTourist } from '../service';
 
 const Login = ({ navigation }) => {
   const [values, setValues] = useState({ user: '', password: '' });
@@ -8,17 +9,20 @@ const Login = ({ navigation }) => {
     setValues({ ...values, [name]: text });
   };
 
-  const validateCredentials = () => {
+  const validateCredentials = async () => {
+    const { message, data } = await loginTourist(values);
+
+    if (data.ninos && message) {
+      // navigation.navigate('Home', { name: data.name });
+      navigation.navigate('Home', { type: data.name });
+    }
+
     if (values.user === 'Admin' && values.password === 'admin') {
       navigation.navigate('Admin');
-    }
-    if (values.user === 'Rony' && values.password === 'rony') {
-      navigation.navigate('Home', { type: 'turista' });
     }
     if (values.user === 'Conductor' && values.password === 'conductor') {
       navigation.navigate('Home', { type: 'conductor' });
     }
-    console.log(values);
   };
 
   return (

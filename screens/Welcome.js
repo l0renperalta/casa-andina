@@ -12,7 +12,7 @@ import CameraRoll from './turista/CameraRoll';
 import Map from './turista/Map';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Inicio from './conductor/Inicio';
+import RegistrarServicio from './turista/RegistrarServicio';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,6 +51,13 @@ function Home({ route }) {
       <Tab.Screen
         name="CameraRoll"
         component={CameraRoll}
+        options={{
+          tabBarIcon: ({ color, size }) => <Ionicons name="location-outline" color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="RegistrarServicio"
+        component={RegistrarServicio}
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="location-outline" color={color} size={size} />,
         }}

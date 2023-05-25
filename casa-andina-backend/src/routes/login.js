@@ -1,8 +1,38 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../connection');
 
-router.post('/registerTourist', async (req, res) => {
-  console.log(req.body);
+router.post('/login', async (req, res) => {
+  const { user, password } = req.body;
+
+  try {
+    const values = await pool.query('SELECT * FROM turistas WHERE nombres = ?', [user]);
+    let data = {
+      name: '',
+      adultos: 0,
+      ninos: 0,
+    };
+
+    if (values.length > 0 && values[0].dni === Number(password)) {
+      data = {
+        name: values[0].nombres,
+        adultos: values[0].adultos,
+        ninos: values[0].ninos,
+      };
+      res.json({
+        data,
+        message: true,
+      });
+    } else {
+      res.json({
+        data,
+        message: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
 });
 
 module.exports = router;

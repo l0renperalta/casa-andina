@@ -10,7 +10,7 @@ const Admin = ({ navigation }) => {
       <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => navigation.navigate('RegistrarConductor')}>
         REGISTRAR CONDUCTOR
       </Text>
-      <Text style={styles.button}>REGISTRAR CAMIONETA</Text>
+      <Text style={styles.button}>REPORTE DE CAMIONETA</Text>
       <Text style={styles.button} backgroundColor="#ffffff" onPress={() => navigation.navigate('Login')}>
         SALIR
       </Text>

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { indexFace, searchFace } = require('../controllers/locationController');
+const { indexFace, searchFace } = require('../controllers/rekognitionController');
 
 router.post('/indexFaces', indexFace);
 router.post('/searchFaceByImage', searchFace);
