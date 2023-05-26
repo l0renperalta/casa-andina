@@ -3,16 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import { searchFaceByImage, uploadImageToCollection } from '../../service';
 
 const CameraRoll = ({ route }) => {
-  const URI = 'http://192.168.1.5:5000/';
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions(true);
   const navigation = useNavigation();
   const [data, setData] = useState({});
+  const { photo } = route.params;
+
+  const verifyFaceFound = () => {
+    if (data.faceFound) {
+      return alert('Face found! you can access!!');
+    } else {
+      return alert('Face not found :(');
+    }
+  };
 
   const renderPhotos = () => {
-    const { photo } = route.params;
-
     return (
       <View key={photo.id}>
         <Image
@@ -81,8 +88,8 @@ const CameraRoll = ({ route }) => {
           <Text>Error 400: Solicitud incorrecta</Text>
         ) : null} */}
 
-        {data.faceFound && <Text>Face found! you can access!!</Text>}
-        {!data.faceFound && <Text>Face not found</Text>}
+        {/* {data.faceFound && <Text>Face found! you can access!!</Text>}
+        {!data.faceFound && <Text>Face not found</Text>} */}
 
         {/* {data['$metadata']?.httpStatusCode === 200 && <Text>{data.SearchedFaceConfidence}</Text>} */}
       </View>
@@ -97,17 +104,11 @@ const CameraRoll = ({ route }) => {
       const formData = new FormData();
       formData.append('face', {
         uri: photo.uri,
-        name: 'image.jpg',
+        name: photo.uri,
         type: 'image/jpg',
       });
 
-      const response = await fetch(URI + 'indexFaces', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await uploadImageToCollection(formData);
 
       if (response.ok) {
         console.log('¡Imagen enviada exitosamente!');
@@ -128,17 +129,12 @@ const CameraRoll = ({ route }) => {
         type: 'image/jpg',
       });
 
-      const response = await fetch(URI + 'searchFaceByImage', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await searchFaceByImage(formData);
 
       const data = await response.json();
       setData(data);
       console.log(data);
+      verifyFaceFound();
     } catch (error) {
       console.log('Error:', error);
     }

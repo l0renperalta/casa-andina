@@ -13,7 +13,6 @@ const Login = ({ navigation }) => {
     const { message, data } = await loginTourist(values);
 
     if (data.ninos && message) {
-      // navigation.navigate('Home', { name: data.name });
       navigation.navigate('Home', { type: data.name });
     }
 

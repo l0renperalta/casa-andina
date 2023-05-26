@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Modal, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Modal } from 'react-native';
 
 const ModalComponent = ({ setIsVisible, isVisible }) => {
   return (

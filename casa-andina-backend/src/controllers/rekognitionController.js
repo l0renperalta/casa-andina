@@ -2,6 +2,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { RekognitionClient, IndexFacesCommand, SearchFacesByImageCommand, ListCollectionsCommand } = require('@aws-sdk/client-rekognition');
 const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../config');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
 const indexFace = async (req, res) => {
   if (!req.files && !req.files.face) {
@@ -37,8 +38,8 @@ const indexFace = async (req, res) => {
     });
     const commandPutObject = new PutObjectCommand({
       Bucket: 'casa-andina-faces',
-      Key: uuidv4(),
-      Body: imageBuffer,
+      Key: req.files.face.name,
+      Body: req.files.face.data,
     });
     const responseS3 = await clientS3.send(commandPutObject);
 

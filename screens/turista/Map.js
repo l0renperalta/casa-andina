@@ -3,18 +3,20 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
+import { getTransportPositions } from '../../service';
 
 const Map = ({ route }) => {
-  const URI = 'http://192.168.1.2:5000/';
+  const { type } = route.params;
   const [location, setLocation] = useState(null);
   const [locationLoaded, setLocationLoaded] = useState(false);
+
+  // const [transportPositions, setTransportPositions] = useState([]);
+
   const [isVisible, setIsVisible] = useState(false);
-  const { type } = route.params;
   const [destination, setDestination] = useState({
     latitude: -16.401589443979947,
     longitude: -71.53376181416482,
   });
-  const [transportPositions, setTransportPositions] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -29,13 +31,7 @@ const Map = ({ route }) => {
       setLocationLoaded(true);
     })();
 
-    (async () => {
-      const response = await fetch(URI + 'getPositions', {
-        method: 'GET',
-      });
-      const { positions } = await response.json();
-      setTransportPositions(positions);
-    })();
+    // setTransportPositions(getTransportPositions());
   }, []);
 
   return (
@@ -73,7 +69,7 @@ const Map = ({ route }) => {
             onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
             draggable
           />
-          {transportPositions.map((marker, index) => (
+          {/* {transportPositions.map((marker, index) => (
             <Marker
               key={index}
               coordinate={{
@@ -83,7 +79,7 @@ const Map = ({ route }) => {
               title="Your distination"
               description="This is your destination location"
             />
-          ))}
+          ))} */}
           {/* {console.log(transportPositions[0].Position[0], transportPositions[0].Position[1])} */}
           <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} />
         </MapView>

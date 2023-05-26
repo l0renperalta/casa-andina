@@ -1,4 +1,27 @@
-const URI = 'http://192.168.1.3:5000/';
+const URI = 'http://192.168.1.2:5000/';
+
+// Turista
+export const uploadImageToCollection = async (formatedImage) => {
+  const response = await fetch(URI + 'indexFaces', {
+    method: 'POST',
+    body: formatedImage,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response;
+};
+
+export const searchFaceByImage = async (formatedImage) => {
+  const response = await fetch(URI + 'searchFaceByImage', {
+    method: 'POST',
+    body: formatedImage,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response;
+};
 
 // Admin
 export const registerTourist = async (data) => {
@@ -23,6 +46,7 @@ export const registerConductor = async (data) => {
   return await response.json();
 };
 
+// Login tourest
 export const loginTourist = async (data) => {
   const response = await fetch(URI + 'login', {
     method: 'POST',
@@ -32,4 +56,13 @@ export const loginTourist = async (data) => {
     body: JSON.stringify(data),
   });
   return await response.json();
+};
+
+// Get Transport locations
+export const getTransportPositions = async () => {
+  const response = await fetch(URI + 'getPositions', {
+    method: 'GET',
+  });
+  const { positions } = await response.json();
+  return positions;
 };

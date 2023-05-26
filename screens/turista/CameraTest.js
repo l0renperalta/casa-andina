@@ -34,7 +34,7 @@ const Recognition = () => {
           </TouchableOpacity>
         </View>
       </Camera>
-      <Text>mucha webada usar la camara pero si pude xd</Text>
+      <Text>camrara texto</Text>
     </View>
   );
 };
