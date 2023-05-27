@@ -1,26 +1,23 @@
 import { StyleSheet, Text, View, Modal } from 'react-native';
 
-const ModalComponent = ({ setIsVisible, isVisible }) => {
+const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
-          <Text style={styles.text}>Ubicacion: </Text>
-          <Text style={styles.text}>Destino: </Text>
           <View flexDirection="row">
-            <Text style={styles.button} backgroundColor="#ffac1c">
+            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => setIsVisible(false)}>
               Adquirir servicio
             </Text>
-            <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => setIsVisible(false)}>
+            <Text style={styles.button} backgroundColor="#88a4fc">
               Reservar servicio
             </Text>
           </View>
         </View>
-        <Text style={styles.title}>Datos del conductor</Text>
-        <Text style={styles.text}>Conductor: </Text>
-        <Text style={styles.text}>Color: </Text>
-        <Text style={styles.text}>Placa: </Text>
-        <Text style={styles.text}>Modelo: </Text>
+        <Text style={styles.text}>Ubicacion: </Text>
+        <Text style={styles.text}>Destino: </Text>
+        <Text style={styles.text}>Adultos: {adultos}</Text>
+        <Text style={styles.text}>Niños: {ninos}</Text>
       </View>
     </Modal>
   );
@@ -53,6 +50,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
+    marginLeft: 20,
+    marginTop: 4,
+    marginBottom: 2,
   },
   modalContent: {
     height: '25%',
@@ -70,6 +70,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     paddingHorizontal: 20,
     flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     color: '#fff',

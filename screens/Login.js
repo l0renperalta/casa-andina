@@ -13,7 +13,14 @@ const Login = ({ navigation }) => {
     const { message, data } = await loginTourist(values);
 
     if (data.ninos && message) {
-      navigation.navigate('Home', { type: data.name });
+      navigation.navigate('Home', {
+        type: {
+          name: data.name,
+          adultos: 3,
+          ninos: 1,
+        },
+      });
+      // navigation.navigate({ routeName: 'Home', params: { type: data.name, adultos: 3 } });
     }
 
     if (values.user === 'Admin' && values.password === 'admin') {

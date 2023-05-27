@@ -1,17 +1,22 @@
 import { StyleSheet, Text, View, TextInput, Modal, Pressable } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
-import { getTransportPositions } from '../../service';
+import { getTransportPositions, searchPlaceByText } from '../../service';
 
 const Map = ({ route }) => {
-  const { type } = route.params;
+  const { name, adultos, ninos } = route.params.type;
+  const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
   const [locationLoaded, setLocationLoaded] = useState(false);
 
   // const [transportPositions, setTransportPositions] = useState([]);
 
+  const [searchText, setSearchText] = useState('');
+  const [destinationMarker, setDestinationMarker] = useState(false);
+
+  // Set modal state visibility
   const [isVisible, setIsVisible] = useState(false);
   const [destination, setDestination] = useState({
     latitude: -16.401589443979947,
@@ -34,24 +39,58 @@ const Map = ({ route }) => {
     // setTransportPositions(getTransportPositions());
   }, []);
 
+  const handleSearch = async () => {
+    const map = mapRef.current;
+    const coordinates = await searchPlaceByText(searchText);
+    setDestination({
+      latitude: coordinates[1],
+      longitude: coordinates[0],
+    });
+    map.animateToRegion({
+      latitude: coordinates[1],
+      longitude: coordinates[0],
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    });
+    setDestinationMarker(true);
+    setIsVisible(true);
+  };
+
+  const spawnMarker = () => {
+    return (
+      <Marker
+        coordinate={destination}
+        title="Your distination"
+        description="This is your destination location"
+        onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
+      />
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} />
+      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} adultos={adultos} ninos={ninos} />
       <View style={styles.container}>
-        <Text style={styles.text}>Hello {type}!</Text>
+        <Text style={styles.text}>Hello {name}!</Text>
         <Text style={styles.text} onPress={() => setIsVisible(true)}>
           Where do you want to go?
         </Text>
-        <TextInput style={styles.input} placeholder="Seach the location" onChangeText={(text) => onChange('location', text)} />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TextInput style={styles.input} placeholder="Seach the location" onChangeText={(text) => setSearchText(text)} />
+          <Text style={{ color: 'white', backgroundColor: '#ffac1c', padding: 7, borderRadius: 10, height: '60%' }} onPress={() => handleSearch()}>
+            Buscar
+          </Text>
+        </View>
       </View>
       {locationLoaded && (
         <MapView
-          style={{ flex: 0.6 }}
+          ref={mapRef}
+          style={{ flex: 0.7 }}
           initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
           }}
         >
           <Marker
@@ -62,13 +101,8 @@ const Map = ({ route }) => {
             title="You are here"
             description="This is your current location"
           />
-          <Marker
-            coordinate={destination}
-            title="Your distination"
-            description="This is your destination location"
-            onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
-            draggable
-          />
+          {destinationMarker && spawnMarker()}
+
           {/* {transportPositions.map((marker, index) => (
             <Marker
               key={index}
@@ -81,7 +115,8 @@ const Map = ({ route }) => {
             />
           ))} */}
           {/* {console.log(transportPositions[0].Position[0], transportPositions[0].Position[1])} */}
-          <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} />
+
+          {/* <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} /> */}
         </MapView>
       )}
       {!locationLoaded && <Text>Turn on your location</Text>}
@@ -93,7 +128,7 @@ export default Map;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.4,
+    flex: 0.3,
     backgroundColor: '#28241c',
     alignItems: 'center',
     justifyContent: 'center',
@@ -103,7 +138,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 10,
     color: 'white',
-    marginHorizontal: 5,
+    backgroundColor: '#ffac1c',
   },
   input: {
     borderRadius: 10,
@@ -112,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     margin: 10,
-    width: '90%',
+    width: '60%',
   },
   text: {
     color: 'white',

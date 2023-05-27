@@ -23,6 +23,17 @@ export const searchFaceByImage = async (formatedImage) => {
   return response;
 };
 
+export const searchPlaceByText = async (place) => {
+  const response = await fetch(URI + 'searchPlaceByText', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ place }),
+  });
+  return await response.json();
+};
+
 // Admin
 export const registerTourist = async (data) => {
   const response = await fetch(URI + 'registerTourist', {

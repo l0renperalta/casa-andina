@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { updateLocation, getPositions } = require('../controllers/locationController');
+const { updateLocation, getPositions, searchPlaceByText } = require('../controllers/locationController');
 
 router.post('/updatePosition', updateLocation);
 router.get('/getPositions', getPositions);
+router.post('/searchPlaceByText', searchPlaceByText);
 
 module.exports = router;
 
