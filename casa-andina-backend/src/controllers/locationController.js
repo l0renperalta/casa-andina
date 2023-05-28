@@ -29,6 +29,7 @@ const updateLocation = async (req, res) => {
   }
 };
 
+// get positions of conductor
 const getPositions = async (req, res) => {
   try {
     const client = new LocationClient({
