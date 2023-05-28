@@ -4,13 +4,16 @@ const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../config');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 
+// recibir imagen y subirla a s3 y guardar facciones en las COLLECTIONS
+// Listar facciones guardar en las collections
+// aws rekognition list-faces --collection-id casa-andina-faces
 const indexFace = async (req, res) => {
   if (!req.files && !req.files.face) {
     res.json('no files uploaded');
   }
 
   try {
-    // Upload image to collection
+    // Subir imagen a la collection
     const clientRekognition = new RekognitionClient({
       region: AWS_REGION,
       credentials: {
@@ -19,6 +22,7 @@ const indexFace = async (req, res) => {
       },
     });
     const imageBuffer = Buffer.from(req.files.face.data, 'base64');
+    // parametros para subir la imagen a la collection
     const commandRekognition = new IndexFacesCommand({
       CollectionId: 'casa-andina-faces',
       ExternalImageId: uuidv4(),
@@ -28,7 +32,7 @@ const indexFace = async (req, res) => {
     });
     const responseRekognition = await clientRekognition.send(commandRekognition);
 
-    // Upload image to S3
+    // Subir imagen a S3
     const clientS3 = new S3Client({
       region: AWS_REGION,
       credentials: {
@@ -50,6 +54,7 @@ const indexFace = async (req, res) => {
   }
 };
 
+// funcion de Reconocimiento facial
 const searchFace = async (req, res) => {
   if (!req.files && !req.files.face) {
     res.json('no files uploaded');
@@ -76,11 +81,19 @@ const searchFace = async (req, res) => {
       },
     };
 
+    // instancia del commando buscar caras por iamgen
     const command = new SearchFacesByImageCommand(input);
+    // ejecutando el la busqueda de la cara
     const response = await client.send(command);
+
+    // imprimir los resultados de la comparacion
     console.log(response);
+
     const { FaceMatches } = response;
+    // comparando que las comparaciones sean mayores a 99.5 para que sea reconocido correctamente
     const faceFound = FaceMatches.some((face) => face.Similarity > 99.5);
+
+    // si la propiedad FaceMatches es un arreglo vacio es por que no ese encontraron coincidencias
     if (FaceMatches.length > 1) {
       res.json({
         faceFound,

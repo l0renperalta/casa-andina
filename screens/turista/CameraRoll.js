@@ -13,9 +13,9 @@ const CameraRoll = ({ route }) => {
 
   const verifyFaceFound = () => {
     if (data.faceFound) {
-      return alert('Face found! you can access!!');
+      return alert('Conductor verificado!! :)');
     } else {
-      return alert('Face not found :(');
+      return alert('Conductor no verificado :(');
     }
   };
 

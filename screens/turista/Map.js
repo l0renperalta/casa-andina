@@ -6,17 +6,24 @@ import ModalComponent from '../../components/ModalComponent';
 import { getTransportPositions, searchPlaceByText } from '../../service';
 
 const Map = ({ route }) => {
+  // recibiendo los datos del turista
   const { name, adultos, ninos } = route.params.type;
+
+  // crear una referencia del mapa para moverlo
   const mapRef = useRef(null);
+
+  // obtener la latitud y longitud de tu ubicacion actual
   const [location, setLocation] = useState(null);
+  // mostrar ubicacion
   const [locationLoaded, setLocationLoaded] = useState(false);
 
   // const [transportPositions, setTransportPositions] = useState([]);
 
+  // buscar destino por texto
   const [searchText, setSearchText] = useState('');
   const [destinationMarker, setDestinationMarker] = useState(false);
 
-  // Set modal state visibility
+  // Cambiar visibilidad del modal
   const [isVisible, setIsVisible] = useState(false);
   const [destination, setDestination] = useState({
     latitude: -16.401589443979947,
@@ -39,19 +46,25 @@ const Map = ({ route }) => {
     // setTransportPositions(getTransportPositions());
   }, []);
 
+  // hacer la busqueda del destino por texto
   const handleSearch = async () => {
     const map = mapRef.current;
+
+    // lamada al backend para buscar el destino
     const coordinates = await searchPlaceByText(searchText);
+
     setDestination({
       latitude: coordinates[1],
       longitude: coordinates[0],
     });
+
     map.animateToRegion({
       latitude: coordinates[1],
       longitude: coordinates[0],
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     });
+
     setDestinationMarker(true);
     setIsVisible(true);
   };

@@ -46,9 +46,6 @@ module.exports = router;
 // Search if the face exists
 // aws rekognition search-faces-by-image --collection-id casa-andina-faces --image-bytes fileb://imagen2.jpg
 
-// List all faces located on the collection
-// aws rekognition list-faces --collection-id casa-andina-faces
-
 // ListCollections
 // ListFaces
 // CreateCollecion
