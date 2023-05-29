@@ -3,6 +3,13 @@ import { useState, useRef } from 'react';
 import { registerTourist } from '../../service';
 
 const RegistrarTurista = () => {
+  const nombresRef = useRef();
+  const apellidosRef = useRef();
+  const dniRef = useRef();
+  const nacionalidadRef = useRef();
+  const niñosRef = useRef();
+  const adultosRef = useRef();
+
   const [turista, setTurista] = useState({
     nombres: '',
     apellidos: '',
@@ -12,63 +19,79 @@ const RegistrarTurista = () => {
     adultos: 0,
   });
 
-  const textInputRefs = useRef([]);
-
   const onChange = (name, input) => {
     setTurista({ ...turista, [name]: input });
   };
 
   const validateFieldsHandler = async () => {
-    console.log(turista);
-    if (!turista.nombres || !turista.apellidos || !turista.dni || !turista.nacionalidad || !turista.niños || !turista.adultos) {
+    if (
+      !turista.nombres ||
+      !turista.apellidos ||
+      !turista.dni ||
+      !turista.nacionalidad ||
+      !turista.niños ||
+      !turista.adultos
+    ) {
       alert('Complete los campos');
     } else {
       registerTourist(turista);
-
-      textInputRefs.current.forEach((ref) => {
-        if (ref.current) {
-          ref.current.clear();
-        }
-      });
-
       alert('Turista registrado exitosamente!!');
+
+      nombresRef.current.clear();
+      apellidosRef.current.clear();
+      dniRef.current.clear();
+      nacionalidadRef.current.clear();
+      niñosRef.current.clear();
+      adultosRef.current.clear();
     }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} ref={(ref) => (textInputRefs.current[0] = ref)} placeholder="Nombres" onChangeText={(input) => onChange('nombres', input)} />
-      <TextInput style={styles.input} ref={(ref) => (textInputRefs.current[0] = ref)} placeholder="Apellidos" onChangeText={(input) => onChange('apellidos', input)} />
       <TextInput
         style={styles.input}
-        ref={(ref) => (textInputRefs.current[0] = ref)}
+        placeholder="Nombres"
+        onChangeText={(input) => onChange('nombres', input)}
+        ref={nombresRef}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Apellidos"
+        onChangeText={(input) => onChange('apellidos', input)}
+        ref={apellidosRef}
+      />
+      <TextInput
+        style={styles.input}
         placeholder="DNI o carnet de extranjeria"
         onChangeText={(input) => onChange('dni', input)}
         numeric
         keyboardType={'numeric'}
+        ref={dniRef}
       />
       <TextInput
         style={styles.input}
-        ref={(ref) => (textInputRefs.current[0] = ref)}
         placeholder="Nacionalidad"
         onChangeText={(input) => onChange('nacionalidad', input)}
+        ref={nacionalidadRef}
       />
-      <TextInput
-        style={styles.input}
-        ref={(ref) => (textInputRefs.current[0] = ref)}
-        placeholder="Niños"
-        onChangeText={(input) => onChange('niños', input)}
-        numeric
-        keyboardType={'numeric'}
-      />
-      <TextInput
-        style={styles.input}
-        ref={(ref) => (textInputRefs.current[0] = ref)}
-        placeholder="Adultos"
-        onChangeText={(input) => onChange('adultos', input)}
-        numeric
-        keyboardType={'numeric'}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.smallInput}
+          placeholder="Niños"
+          onChangeText={(input) => onChange('niños', input)}
+          numeric
+          keyboardType={'numeric'}
+          ref={niñosRef}
+        />
+        <TextInput
+          style={styles.smallInput}
+          placeholder="Adultos"
+          onChangeText={(input) => onChange('adultos', input)}
+          numeric
+          keyboardType={'numeric'}
+          ref={adultosRef}
+        />
+      </View>
       <Text style={styles.button} onPress={() => validateFieldsHandler()}>
         Registrar Turista
       </Text>
@@ -100,5 +123,19 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     width: '90%',
+  },
+  smallInput: {
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'black',
+    backgroundColor: 'white',
+    padding: 10,
+    margin: 10,
+    width: '42%',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

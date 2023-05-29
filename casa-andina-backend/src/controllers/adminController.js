@@ -4,7 +4,6 @@ const pool = require('../connection');
 const registerTourist = async (req, res) => {
   const { nombres, apellidos, dni, nacionalidad, niños, adultos } = req.body;
   const tourist = {
-    id: uuidv4(),
     nombres,
     apellidos,
     dni: Number(dni),
@@ -13,19 +12,16 @@ const registerTourist = async (req, res) => {
     adultos: Number(adultos),
   };
   await pool.query('INSERT INTO turistas set ?', [tourist]);
-  console.log(tourist);
 };
 
 const registerConductor = async (req, res) => {
   const { nombres, apellidos, dni, marca, modelo, placa, color, asientos } = req.body;
   const conductor = {
-    id: uuidv4(),
     nombres,
     apellidos,
     dni: Number(dni),
   };
   const vehicle = {
-    id: uuidv4(),
     marca,
     modelo,
     placa,

@@ -1,12 +1,19 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { loginTourist } from '../service';
 
 const Login = ({ navigation }) => {
   const [values, setValues] = useState({ user: '', password: '' });
+  const userRef = useRef();
+  const passwordRef = useRef();
 
   const onChange = (name, text) => {
     setValues({ ...values, [name]: text });
+  };
+
+  const clearValues = () => {
+    userRef.current.clear();
+    passwordRef.current.clear();
   };
 
   const validateCredentials = async () => {
@@ -16,15 +23,16 @@ const Login = ({ navigation }) => {
       navigation.navigate('Home', {
         type: {
           name: data.name,
-          adultos: 3,
-          ninos: 1,
+          adultos: data.adultos,
+          ninos: data.ninos,
         },
       });
-      // navigation.navigate({ routeName: 'Home', params: { type: data.name, adultos: 3 } });
+      clearValues();
     }
 
     if (values.user === 'Admin' && values.password === 'admin') {
       navigation.navigate('Admin');
+      clearValues();
     }
     if (values.user === 'Conductor' && values.password === 'conductor') {
       navigation.navigate('Home', { type: 'conductor' });
@@ -33,8 +41,19 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Usuario" onChangeText={(text) => onChange('user', text)} />
-      <TextInput style={styles.input} placeholder="Contraseña" onChangeText={(text) => onChange('password', text)} secureTextEntry={true} />
+      <TextInput
+        style={styles.input}
+        ref={userRef}
+        placeholder="Usuario"
+        onChangeText={(text) => onChange('user', text)}
+      />
+      <TextInput
+        style={styles.input}
+        ref={passwordRef}
+        placeholder="Contraseña"
+        onChangeText={(text) => onChange('password', text)}
+        secureTextEntry={true}
+      />
       <Text style={styles.button} onPress={() => validateCredentials()}>
         Ingresar
       </Text>
