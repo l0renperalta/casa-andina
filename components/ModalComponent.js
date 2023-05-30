@@ -1,15 +1,15 @@
 import { StyleSheet, Text, View, Modal } from 'react-native';
 
-const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos }) => {
+const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos, toggleTrackerPositions }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
           <View flexDirection="row">
-            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => setIsVisible(false)}>
+            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => setInterval(toggleTrackerPositions, 1500)}>
               Adquirir servicio
             </Text>
-            <Text style={styles.button} backgroundColor="#88a4fc">
+            <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => setIsVisible(false)}>
               Reservar servicio
             </Text>
           </View>

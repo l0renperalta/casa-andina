@@ -19,41 +19,34 @@ const Login = ({ navigation }) => {
   const validateCredentials = async () => {
     const { message, data } = await loginTourist(values);
 
-    if (data.ninos && message) {
-      navigation.navigate('Home', {
-        type: {
-          name: data.name,
-          adultos: data.adultos,
-          ninos: data.ninos,
-        },
-      });
-      clearValues();
-    }
+    if (values.user === '' && values.password === '') {
+      alert('Complete los campos');
+    } else {
+      if (data.ninos && message) {
+        navigation.navigate('Home', {
+          type: {
+            name: data.name,
+            adultos: data.adultos,
+            ninos: data.ninos,
+          },
+        });
+        clearValues();
+      }
 
-    if (values.user === 'Admin' && values.password === 'admin') {
-      navigation.navigate('Admin');
-      clearValues();
-    }
-    if (values.user === 'Conductor' && values.password === 'conductor') {
-      navigation.navigate('Home', { type: 'conductor' });
+      if (values.user === 'Admin' && values.password === 'admin') {
+        navigation.navigate('Admin');
+        clearValues();
+      }
+      if (values.user === 'Conductor' && values.password === 'conductor') {
+        navigation.navigate('Home', { type: 'conductor' });
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        ref={userRef}
-        placeholder="Usuario"
-        onChangeText={(text) => onChange('user', text)}
-      />
-      <TextInput
-        style={styles.input}
-        ref={passwordRef}
-        placeholder="Contraseña"
-        onChangeText={(text) => onChange('password', text)}
-        secureTextEntry={true}
-      />
+      <TextInput style={styles.input} ref={userRef} placeholder="Usuario" onChangeText={(text) => onChange('user', text)} />
+      <TextInput style={styles.input} ref={passwordRef} placeholder="Contraseña" onChangeText={(text) => onChange('password', text)} secureTextEntry={true} />
       <Text style={styles.button} onPress={() => validateCredentials()}>
         Ingresar
       </Text>

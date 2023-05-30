@@ -1,4 +1,10 @@
-const { LocationClient, BatchUpdateDevicePositionCommand, GetDevicePositionHistoryCommand, SearchPlaceIndexForTextCommand } = require('@aws-sdk/client-location');
+const {
+  LocationClient,
+  BatchUpdateDevicePositionCommand,
+  GetDevicePositionHistoryCommand,
+  SearchPlaceIndexForTextCommand,
+  SearchPlaceIndexForPositionCommand,
+} = require('@aws-sdk/client-location');
 const { AWS_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../config');
 
 const updateLocation = async (req, res) => {
@@ -86,10 +92,40 @@ const searchPlaceByText = async (req, res) => {
   }
 };
 
+const searchPlaceByCoordinates = async () => {
+  if (!req.body.place) {
+    res.json({
+      message: 'error',
+    });
+  } else {
+    try {
+      const client = new LocationClient({
+        region: AWS_REGION,
+        credentials: {
+          accessKeyId: ACCESS_KEY,
+          secretAccessKey: SECRET_ACCESS_KEY,
+        },
+      });
+
+      const input = {
+        // SearchPlaceIndexForPositionRequest
+        IndexName: 'casa-andina-index', // required
+        Position: [-71.5374, -16.409],
+      };
+      const command = new SearchPlaceIndexForPositionCommand(input);
+      const response = await client.send(command);
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
 module.exports = {
   updateLocation,
   getPositions,
   searchPlaceByText,
+  searchPlaceByCoordinates,
 };
 
 // aws location search-place-index-for-text --index-name casa-andina-index --text "calle ugarte" --filter-countries PER --bias-position ["-71.5374,-16.409"]

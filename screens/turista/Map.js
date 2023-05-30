@@ -24,10 +24,16 @@ const Map = ({ route }) => {
   const [destinationMarker, setDestinationMarker] = useState(false);
 
   // Cambiar visibilidad del modal
-  const [isVisible, setIsVisible] = useState(false);
   const [destination, setDestination] = useState({
     latitude: -16.401589443979947,
     longitude: -71.53376181416482,
+  });
+  const [isVisible, setIsVisible] = useState(false);
+
+  const [showTrackerPositions, setShowTrackerPositions] = useState(false);
+  const [trackerCoordinates, setTrackerCoordinates] = useState({
+    latitude: -16.399884822698212,
+    longitude: -71.53550966370722,
   });
 
   useEffect(() => {
@@ -80,9 +86,25 @@ const Map = ({ route }) => {
     );
   };
 
+  const toggleTrackerPositions = () => {
+    if (!showTrackerPositions) {
+      setShowTrackerPositions(true);
+    } else {
+      setShowTrackerPositions(false);
+    }
+    setTrackerCoordinates((prevState) => ({
+      latitude: prevState.latitude + 0.0001,
+      longitude: prevState.longitude + 0.00004,
+    }));
+  };
+
+  const getTrackerPositions = () => {
+    return <Marker coordinate={trackerCoordinates} />;
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} adultos={adultos} ninos={ninos} />
+      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} adultos={adultos} ninos={ninos} toggleTrackerPositions={toggleTrackerPositions} />
       <View style={styles.container}>
         <Text style={styles.text}>Hello {name}!</Text>
         <Text style={styles.text} onPress={() => setIsVisible(true)}>
@@ -111,11 +133,11 @@ const Map = ({ route }) => {
               latitude: location.latitude,
               longitude: location.longitude,
             }}
-            title="You are here"
-            description="This is your current location"
+            title="Tu estas aqui"
+            description="Tu Ubicacion actual"
           />
           {destinationMarker && spawnMarker()}
-
+          {showTrackerPositions && getTrackerPositions()}
           {/* {transportPositions.map((marker, index) => (
             <Marker
               key={index}
