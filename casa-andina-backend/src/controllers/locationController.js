@@ -92,32 +92,30 @@ const searchPlaceByText = async (req, res) => {
   }
 };
 
-const searchPlaceByCoordinates = async () => {
-  if (!req.body.place) {
-    res.json({
-      message: 'error',
+const searchPlaceByCoordinates = async (req, res) => {
+  const { latitude, longitude } = req.body.coordinates;
+  try {
+    const client = new LocationClient({
+      region: AWS_REGION,
+      credentials: {
+        accessKeyId: ACCESS_KEY,
+        secretAccessKey: SECRET_ACCESS_KEY,
+      },
     });
-  } else {
-    try {
-      const client = new LocationClient({
-        region: AWS_REGION,
-        credentials: {
-          accessKeyId: ACCESS_KEY,
-          secretAccessKey: SECRET_ACCESS_KEY,
-        },
-      });
 
-      const input = {
-        // SearchPlaceIndexForPositionRequest
-        IndexName: 'casa-andina-index', // required
-        Position: [-71.5374, -16.409],
-      };
-      const command = new SearchPlaceIndexForPositionCommand(input);
-      const response = await client.send(command);
-      res.json(response);
-    } catch (error) {
-      console.log(error);
-    }
+    const input = {
+      // SearchPlaceIndexForPositionRequest
+      IndexName: 'casa-andina-index', // required
+      Position: [longitude, latitude],
+    };
+    const command = new SearchPlaceIndexForPositionCommand(input);
+    const response = await client.send(command);
+    const data = response.Results[0].Place.Label;
+    res.json({
+      location: data,
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 

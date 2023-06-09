@@ -25,6 +25,7 @@ const Login = ({ navigation }) => {
       if (data.ninos && message) {
         navigation.navigate('Home', {
           type: {
+            id: data.id,
             name: data.name,
             adultos: data.adultos,
             ninos: data.ninos,

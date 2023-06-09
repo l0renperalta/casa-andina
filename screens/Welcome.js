@@ -12,6 +12,8 @@ import CameraRoll from './turista/CameraRoll';
 import Map from './turista/Map';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import RegistrarServicio from './turista/RegistrarServicio';
 
 const Stack = createNativeStackNavigator();
@@ -52,14 +54,14 @@ function Home({ route }) {
         name="CameraRoll"
         component={CameraRoll}
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="location-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <FontAwesome name="file-photo-o" color={color} size={size} />,
         }}
       />
       <Tab.Screen
         name="RegistrarServicio"
         component={RegistrarServicio}
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="location-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <AntDesign name="form" color={color} size={size} />,
         }}
       />
     </Tab.Navigator>

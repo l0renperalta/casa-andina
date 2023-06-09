@@ -1,21 +1,50 @@
 import { StyleSheet, Text, View, Modal } from 'react-native';
+import { registerService } from '../service';
+import { useNavigation } from '@react-navigation/native';
 
-const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos, toggleTrackerPositions }) => {
+const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos, toggleTrackerPositions, ubicacion, destino, id }) => {
+  const navigation = useNavigation();
+
+  const adquireServiceHandler = () => {
+    registerService({
+      id,
+      adultos,
+      niños: ninos,
+      ubicacion,
+      destino,
+    });
+
+    alert('servicio registrado!');
+    setIsVisible(false);
+    // const fecha = new Date();
+    // fecha.setHours(fecha.getHours());
+    // console.log(fecha);
+
+    // setInterval(toggleTrackerPositions, 1500)
+  };
+
+  const reserveServiceHandler = () => {
+    navigation.navigate('RegistrarServicio', {
+      id: id,
+    });
+    setIsVisible(false);
+  };
+
   return (
     <Modal animationType="slide" transparent={true} visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
           <View flexDirection="row">
-            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => setInterval(toggleTrackerPositions, 1500)}>
+            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => adquireServiceHandler()}>
               Adquirir servicio
             </Text>
-            <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => setIsVisible(false)}>
+            <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => reserveServiceHandler()}>
               Reservar servicio
             </Text>
           </View>
         </View>
-        <Text style={styles.text}>Ubicacion: </Text>
-        <Text style={styles.text}>Destino: </Text>
+        <Text style={styles.text}>Ubicacion: {ubicacion}</Text>
+        <Text style={styles.text}>Destino: {destino}</Text>
         <Text style={styles.text}>Adultos: {adultos}</Text>
         <Text style={styles.text}>Niños: {ninos}</Text>
       </View>

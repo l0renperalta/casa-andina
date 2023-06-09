@@ -21,5 +21,6 @@ app.use(require('./routes/location'));
 app.use(require('./routes/rekognition'));
 app.use(require('./routes/admin'));
 app.use(require('./routes/login'));
+app.use(require('./routes/service'));
 
 app.listen(app.get('port'), () => console.log(`Server listening on port ${app.get('port')}`));

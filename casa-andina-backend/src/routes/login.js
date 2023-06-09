@@ -8,6 +8,7 @@ router.post('/login', async (req, res) => {
   try {
     const values = await pool.query('SELECT * FROM turistas WHERE nombres = ?', [user]);
     let data = {
+      id: null,
       name: '',
       adultos: 0,
       ninos: 0,
@@ -15,6 +16,7 @@ router.post('/login', async (req, res) => {
 
     if (values.length > 0 && values[0].dni === Number(password)) {
       data = {
+        id: values[0].id,
         name: values[0].nombres,
         adultos: values[0].adultos,
         ninos: values[0].ninos,

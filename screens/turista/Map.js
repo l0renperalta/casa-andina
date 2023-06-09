@@ -3,11 +3,11 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
-import { getTransportPositions, searchPlaceByText } from '../../service';
+import { getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
 
 const Map = ({ route }) => {
   // recibiendo los datos del turista
-  const { name, adultos, ninos } = route.params.type;
+  const { id, name, adultos, ninos } = route.params.type;
 
   // crear una referencia del mapa para moverlo
   const mapRef = useRef(null);
@@ -16,6 +16,7 @@ const Map = ({ route }) => {
   const [location, setLocation] = useState(null);
   // mostrar ubicacion
   const [locationLoaded, setLocationLoaded] = useState(false);
+  const [locationLabel, setLocationLabel] = useState('');
 
   // const [transportPositions, setTransportPositions] = useState([]);
 
@@ -52,9 +53,13 @@ const Map = ({ route }) => {
     // setTransportPositions(getTransportPositions());
   }, []);
 
-  // hacer la busqueda del destino por texto
   const handleSearch = async () => {
     const map = mapRef.current;
+
+    // lamada al backend para buscar la ubicacion
+    const { latitude, longitude } = location;
+    const response = await searchPlaceByCoordinates({ latitude, longitude });
+    setLocationLabel(response.location.split(',')[0]);
 
     // lamada al backend para buscar el destino
     const coordinates = await searchPlaceByText(searchText);
@@ -79,8 +84,8 @@ const Map = ({ route }) => {
     return (
       <Marker
         coordinate={destination}
-        title="Your distination"
-        description="This is your destination location"
+        title="Este es tu destino"
+        description="Esta es tu ubicacion de destino"
         onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
       />
     );
@@ -104,7 +109,16 @@ const Map = ({ route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} adultos={adultos} ninos={ninos} toggleTrackerPositions={toggleTrackerPositions} />
+      <ModalComponent
+        setIsVisible={setIsVisible}
+        isVisible={isVisible}
+        adultos={adultos}
+        ninos={ninos}
+        toggleTrackerPositions={toggleTrackerPositions}
+        ubicacion={locationLabel}
+        destino={searchText}
+        id={id}
+      />
       <View style={styles.container}>
         <Text style={styles.text}>Hello {name}!</Text>
         <Text style={styles.text} onPress={() => setIsVisible(true)}>
