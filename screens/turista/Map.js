@@ -6,8 +6,12 @@ import ModalComponent from '../../components/ModalComponent';
 import { getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
 
 const Map = ({ route }) => {
-  // recibiendo los datos del turista
-  const { id, name, adultos, ninos } = route.params.type;
+  const [values, setValues] = useState({
+    id: 0,
+    name: '',
+    adultos: 0,
+    ninos: 0,
+  });
 
   // crear una referencia del mapa para moverlo
   const mapRef = useRef(null);
@@ -38,6 +42,16 @@ const Map = ({ route }) => {
   });
 
   useEffect(() => {
+    if (route.params) {
+      const { id, name, adultos, ninos } = route.params?.type;
+      setValues({
+        id,
+        name,
+        adultos,
+        ninos,
+      });
+    }
+
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -112,15 +126,15 @@ const Map = ({ route }) => {
       <ModalComponent
         setIsVisible={setIsVisible}
         isVisible={isVisible}
-        adultos={adultos}
-        ninos={ninos}
+        adultos={values.adultos}
+        ninos={values.ninos}
         toggleTrackerPositions={toggleTrackerPositions}
         ubicacion={locationLabel}
         destino={searchText}
-        id={id}
+        id={values.id}
       />
       <View style={styles.container}>
-        <Text style={styles.text}>Hello {name}!</Text>
+        <Text style={styles.text}>Hello {values.name}!</Text>
         <Text style={styles.text} onPress={() => setIsVisible(true)}>
           Where do you want to go?
         </Text>
@@ -168,7 +182,7 @@ const Map = ({ route }) => {
           {/* <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} /> */}
         </MapView>
       )}
-      {!locationLoaded && <Text>Turn on your location</Text>}
+      {!locationLoaded && <Text>Activa tu ubicacion</Text>}
     </View>
   );
 };

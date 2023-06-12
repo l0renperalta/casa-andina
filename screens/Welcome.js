@@ -68,14 +68,6 @@ function Home({ route }) {
   );
 }
 
-// function Conductor() {
-//   return (
-//     <Tab.Navigator>
-//       <Tab.Screen name="Inicio" component={Inicio} />
-//     </Tab.Navigator>
-//   );
-// }
-
 const Welcome = () => {
   return (
     <NavigationContainer>
@@ -85,7 +77,6 @@ const Welcome = () => {
         <Stack.Screen name="RegistrarTurista" component={RegistrarTurista} />
         <Stack.Screen name="RegistrarConductor" component={RegistrarConductor} />
         <Stack.Screen name="Home" component={Home} />
-        {/* <Stack.Screen name="Conductor" component={Conductor} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

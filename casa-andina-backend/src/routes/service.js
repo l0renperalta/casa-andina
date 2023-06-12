@@ -17,4 +17,10 @@ router.post('/registerService', async (req, res) => {
   await pool.query('INSERT INTO servicio set ?', [servicio]);
 });
 
+router.get('/getAvalibleServices', async (req, res) => {
+  const services = await pool.query('SELECT * FROM servicio');
+  // console.log(services);
+  res.json(services);
+});
+
 module.exports = router;
