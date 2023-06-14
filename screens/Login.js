@@ -17,18 +17,27 @@ const Login = ({ navigation }) => {
   };
 
   const validateCredentials = async () => {
-    const { message, data } = await loginTourist(values);
+    const { message, data, userType } = await loginTourist(values);
 
+    // console.log(message, data, userType);
     if (values.user === '' && values.password === '') {
       alert('Complete los campos');
     } else {
-      if (data.ninos && message) {
+      if (userType === 'turista') {
         navigation.navigate('Home', {
           type: {
-            id: data.id,
-            name: data.name,
-            adultos: data.adultos,
-            ninos: data.ninos,
+            user: 'turista',
+            data: data,
+          },
+        });
+        clearValues();
+      }
+
+      if (userType === 'conductor') {
+        navigation.navigate('Home', {
+          type: {
+            user: 'conductor',
+            data: data,
           },
         });
         clearValues();
@@ -37,9 +46,6 @@ const Login = ({ navigation }) => {
       if (values.user === 'Admin' && values.password === 'admin') {
         navigation.navigate('Admin');
         clearValues();
-      }
-      if (values.user === 'Conductor' && values.password === 'conductor') {
-        navigation.navigate('Home', { type: 'conductor' });
       }
     }
   };

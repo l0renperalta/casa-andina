@@ -6,34 +6,42 @@ router.post('/login', async (req, res) => {
   const { user, password } = req.body;
 
   try {
-    const values = await pool.query('SELECT * FROM turistas WHERE nombres = ?', [user]);
-    let data = {
-      id: null,
-      name: '',
-      adultos: 0,
-      ninos: 0,
-    };
+    const turista = await pool.query('SELECT * FROM turistas WHERE nombres = ?', [user]);
+    const conductor = await pool.query('SELECT * FROM conductor WHERE nombres = ?', [user]);
 
-    if (values.length > 0 && values[0].dni === Number(password)) {
-      data = {
-        id: values[0].id,
-        name: values[0].nombres,
-        adultos: values[0].adultos,
-        ninos: values[0].ninos,
-      };
-      res.json({
-        data,
-        message: true,
-      });
+    if (turista.length > 0 || conductor.length > 0) {
+      if (turista.length > 0 && turista[0].dni === Number(password)) {
+        let data = {
+          id: turista[0].id,
+          name: turista[0].nombres,
+          adultos: turista[0].adultos,
+          ninos: turista[0].ninos,
+        };
+        res.json({
+          data,
+          message: true,
+          userType: 'turista',
+        });
+      }
+
+      if (conductor.length > 0 && conductor[0].dni === Number(password)) {
+        let data = {
+          id: conductor[0].id,
+          name: conductor[0].nombres,
+        };
+        res.json({
+          data,
+          message: true,
+          userType: 'conductor',
+        });
+      }
     } else {
       res.json({
-        data,
         message: false,
       });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    console.log(error);
   }
 });
 

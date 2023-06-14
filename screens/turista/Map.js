@@ -4,35 +4,30 @@ import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
 import { getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
+import { useNavigation } from '@react-navigation/native';
 
 const Map = ({ route }) => {
-  const [values, setValues] = useState({
+  // UBICACION
+  const [location, setLocation] = useState(null);
+  const [locationLoaded, setLocationLoaded] = useState(false);
+
+  // DESTINO
+  const [destination, setDestination] = useState(null);
+  const [showDestinationMarker, setShowDestinationMarker] = useState(false);
+
+  // LOGIN DATA
+  const [userData, setUserData] = useState({
     id: 0,
     name: '',
     adultos: 0,
     ninos: 0,
   });
 
-  // crear una referencia del mapa para moverlo
-  const mapRef = useRef(null);
-
-  // obtener la latitud y longitud de tu ubicacion actual
-  const [location, setLocation] = useState(null);
-  // mostrar ubicacion
-  const [locationLoaded, setLocationLoaded] = useState(false);
   const [locationLabel, setLocationLabel] = useState('');
 
   // const [transportPositions, setTransportPositions] = useState([]);
 
-  // buscar destino por texto
   const [searchText, setSearchText] = useState('');
-  const [destinationMarker, setDestinationMarker] = useState(false);
-
-  // Cambiar visibilidad del modal
-  const [destination, setDestination] = useState({
-    latitude: -16.401589443979947,
-    longitude: -71.53376181416482,
-  });
   const [isVisible, setIsVisible] = useState(false);
 
   const [showTrackerPositions, setShowTrackerPositions] = useState(false);
@@ -41,21 +36,39 @@ const Map = ({ route }) => {
     longitude: -71.53550966370722,
   });
 
+  const navigation = useNavigation();
+  const mapRef = useRef(null);
+
+  const { user, data } = route.params?.type;
+
   useEffect(() => {
-    if (route.params) {
-      const { id, name, adultos, ninos } = route.params?.type;
-      setValues({
-        id,
-        name,
-        adultos,
-        ninos,
+    if (user === 'turista') {
+      navigation.setOptions({ headerTitle: 'Hotel Los Balcones' });
+      setUserData({
+        id: data.id,
+        name: data.name,
+        adultos: data.adultos,
+        ninos: data.ninos,
+      });
+    }
+    if (user === 'conductor') {
+      navigation.setOptions({ headerTitle: 'Hotel Los Balcones - Conductor' });
+      navigation.navigate('RegistrarServicio', {
+        id: 1,
+      });
+      setUserData({
+        id: data.id,
+        name: data.name,
+        adultos: data.adultos,
+        ninos: data.ninos,
       });
     }
 
+    // solicitando permisos de GPS al entrar
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        // Handle permission denied
+        console.log('permiso denegado');
         return;
       }
 
@@ -70,12 +83,12 @@ const Map = ({ route }) => {
   const handleSearch = async () => {
     const map = mapRef.current;
 
-    // lamada al backend para buscar la ubicacion
+    // buscar ubicacion del turista por coordenadas
     const { latitude, longitude } = location;
     const response = await searchPlaceByCoordinates({ latitude, longitude });
     setLocationLabel(response.location.split(',')[0]);
 
-    // lamada al backend para buscar el destino
+    // buscar ubicacion que ingreso el turista
     const coordinates = await searchPlaceByText(searchText);
 
     setDestination({
@@ -90,7 +103,7 @@ const Map = ({ route }) => {
       longitudeDelta: 0.01,
     });
 
-    setDestinationMarker(true);
+    setShowDestinationMarker(true);
     setIsVisible(true);
   };
 
@@ -123,32 +136,27 @@ const Map = ({ route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent
-        setIsVisible={setIsVisible}
-        isVisible={isVisible}
-        adultos={values.adultos}
-        ninos={values.ninos}
-        toggleTrackerPositions={toggleTrackerPositions}
-        ubicacion={locationLabel}
-        destino={searchText}
-        id={values.id}
-      />
-      <View style={styles.container}>
-        <Text style={styles.text}>Hello {values.name}!</Text>
-        <Text style={styles.text} onPress={() => setIsVisible(true)}>
-          Where do you want to go?
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TextInput style={styles.input} placeholder="Seach the location" onChangeText={(text) => setSearchText(text)} />
-          <Text style={{ color: 'white', backgroundColor: '#ffac1c', padding: 7, borderRadius: 10, height: '60%' }} onPress={() => handleSearch()}>
-            Buscar
+      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} ubicacion={locationLabel} destino={searchText} userData={userData} />
+      {user === 'turista' && (
+        <View style={styles.container}>
+          <Text style={styles.text} onPress={() => setInterval(toggleTrackerPositions, 500)}>
+            Hello {userData.name}!
           </Text>
+          <Text style={styles.text} onPress={() => setIsVisible(true)}>
+            Where do you want to go?
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput style={styles.input} placeholder="Seach the location" onChangeText={(text) => setSearchText(text)} />
+            <Text style={{ color: 'white', backgroundColor: '#ffac1c', padding: 7, borderRadius: 10, height: '60%' }} onPress={() => handleSearch()}>
+              Buscar
+            </Text>
+          </View>
         </View>
-      </View>
+      )}
       {locationLoaded && (
         <MapView
           ref={mapRef}
-          style={{ flex: 0.7 }}
+          style={{ flex: user === 'turista' ? 0.7 : 1 }}
           initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
@@ -164,7 +172,7 @@ const Map = ({ route }) => {
             title="Tu estas aqui"
             description="Tu Ubicacion actual"
           />
-          {destinationMarker && spawnMarker()}
+          {showDestinationMarker && spawnMarker()}
           {showTrackerPositions && getTrackerPositions()}
           {/* {transportPositions.map((marker, index) => (
             <Marker

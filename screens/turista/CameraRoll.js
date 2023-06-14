@@ -9,7 +9,10 @@ const CameraRoll = ({ route }) => {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions(true);
   const navigation = useNavigation();
   const [data, setData] = useState({});
-  const { photo } = route.params;
+  const photo = route.params?.photo ?? {
+    id: 0,
+    uri: '',
+  };
 
   const verifyFaceFound = () => {
     if (data.faceFound) {
@@ -56,7 +59,7 @@ const CameraRoll = ({ route }) => {
                 textAlign: 'center',
               }}
             >
-              Save on aws
+              Guardar rostro en aws
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -78,7 +81,7 @@ const CameraRoll = ({ route }) => {
                 textAlign: 'center',
               }}
             >
-              Search Face
+              Buscar rostro
             </Text>
           </TouchableOpacity>
         </View>

@@ -2,8 +2,10 @@ import { StyleSheet, Text, View, Modal } from 'react-native';
 import { registerService } from '../service';
 import { useNavigation } from '@react-navigation/native';
 
-const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos, toggleTrackerPositions, ubicacion, destino, id }) => {
+const ModalComponent = ({ setIsVisible, isVisible, ubicacion, destino, userData }) => {
   const navigation = useNavigation();
+
+  const { adultos, ninos, id } = userData;
 
   const adquireServiceHandler = () => {
     registerService({
@@ -19,8 +21,6 @@ const ModalComponent = ({ setIsVisible, isVisible, adultos, ninos, toggleTracker
     // const fecha = new Date();
     // fecha.setHours(fecha.getHours());
     // console.log(fecha);
-
-    // setInterval(toggleTrackerPositions, 1500)
   };
 
   const reserveServiceHandler = () => {

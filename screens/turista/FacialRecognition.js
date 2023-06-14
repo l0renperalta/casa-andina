@@ -135,10 +135,10 @@ const FacialRecognition = () => {
                 textAlign: 'center',
               }}
             >
-              Register
+              Verificar rostro
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => navigation.navigate('CameraTest')}
             style={{
               width: 130,
@@ -159,7 +159,7 @@ const FacialRecognition = () => {
             >
               Login
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
 

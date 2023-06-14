@@ -4,24 +4,10 @@ import { getAvalibleServices, registerService } from '../../service';
 import { useNavigation } from '@react-navigation/native';
 
 const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
-  const id = route?.params?.id;
+  const id = route.params?.id;
 
   const navigation = useNavigation();
-
   const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
-
-  useEffect(() => {
-    if (!id) {
-      navigation.setOptions({ headerTitle: 'Traslados disponibles' });
-      setShowServices(true);
-    }
-
-    (async () => {
-      const data = await getAvalibleServices();
-      setServiciosDisponibles(data);
-    })();
-  }, []);
-
   const [showServices, setShowServices] = useState(false);
 
   const ubicacionRef = useRef();
@@ -38,6 +24,18 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
     niños: 0,
     adultos: 0,
   });
+
+  useEffect(() => {
+    if (id) {
+      navigation.setOptions({ headerTitle: 'Traslados disponibles' });
+      setShowServices(true);
+    }
+
+    (async () => {
+      const data = await getAvalibleServices();
+      setServiciosDisponibles(data);
+    })();
+  }, []);
 
   const onChange = (name, input) => {
     setServicio({ ...servicio, [name]: input });
@@ -72,6 +70,13 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
 
   const serviceDetails = (id) => {
     const service = serviciosDisponibles.find((e) => e.id === id);
+
+    // navigation.navigate('Home', {
+    //   type: {
+    //     user: 'turista',
+    //     data: service,
+    //   },
+    // });
 
     Alert.alert(
       //title
