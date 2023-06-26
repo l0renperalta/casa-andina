@@ -1,69 +1,51 @@
-import { StyleSheet, Text, View, TextInput, Modal, Pressable } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
-import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TextInput, Alert, Modal, Pressable } from 'react-native';
+import { useState, useEffect, useRef, useContext } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
 import { getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
 import { useNavigation } from '@react-navigation/native';
+import MapComponent from '../../components/MapComponent';
+import { Marker } from 'react-native-maps';
+import { AppContext } from '../../AppContext';
 
 const Map = ({ route }) => {
-  // UBICACION
-  const [location, setLocation] = useState(null);
-  const [locationLoaded, setLocationLoaded] = useState(false);
-
-  // DESTINO
-  const [destination, setDestination] = useState(null);
-  const [showDestinationMarker, setShowDestinationMarker] = useState(false);
-
-  // LOGIN DATA
+  const { user, data } = route.params?.type;
   const [userData, setUserData] = useState({
     id: 0,
     name: '',
     adultos: 0,
     ninos: 0,
   });
-
-  const [locationLabel, setLocationLabel] = useState('');
-
-  // const [transportPositions, setTransportPositions] = useState([]);
-
-  const [searchText, setSearchText] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-
-  const [showTrackerPositions, setShowTrackerPositions] = useState(false);
-  const [trackerCoordinates, setTrackerCoordinates] = useState({
-    latitude: -16.399884822698212,
-    longitude: -71.53550966370722,
-  });
-
   const navigation = useNavigation();
   const mapRef = useRef(null);
 
-  const { user, data } = route.params?.type;
+  // UBICACION TURISTA: Coordenadas
+  const [location, setLocation] = useState(null);
+  const [locationLoaded, setLocationLoaded] = useState(false);
+
+  // DESTINO TURISTA: Coordenadas
+  const [destination, setDestination] = useState(null);
+  const [destinationMarkerVisible, setDestinationMarkerVisible] = useState(false);
+
+  // UBICACION TURISTA: Texto
+  const [locationLabel, setLocationLabel] = useState('');
+
+  // BUSCAR DESTINO
+  const [searchText, setSearchText] = useState('');
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [driverMarkerIsVisible, setDriverMarkerIsVisible] = useState(false);
+
+  // Global state
+  const { serviceAccepted, setServiceAccepted } = useContext(AppContext);
 
   useEffect(() => {
-    if (user === 'turista') {
-      navigation.setOptions({ headerTitle: 'Hotel Los Balcones' });
-      setUserData({
-        id: data.id,
-        name: data.name,
-        adultos: data.adultos,
-        ninos: data.ninos,
-      });
+    // Check if service is accepted
+    if (serviceAccepted) {
+      setDriverMarkerIsVisible(true);
+      callback();
     }
-    if (user === 'conductor') {
-      navigation.setOptions({ headerTitle: 'Hotel Los Balcones - Conductor' });
-      navigation.navigate('RegistrarServicio', {
-        id: 1,
-      });
-      setUserData({
-        id: data.id,
-        name: data.name,
-        adultos: data.adultos,
-        ninos: data.ninos,
-      });
-    }
-
     // solicitando permisos de GPS al entrar
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -77,18 +59,39 @@ const Map = ({ route }) => {
       setLocationLoaded(true);
     })();
 
-    // setTransportPositions(getTransportPositions());
+    if (user === 'turista') {
+      navigation.setOptions({ headerTitle: 'Hotel Los Balcones' });
+      setUserData({
+        id: data.id,
+        name: data.name,
+        adultos: data.adultos,
+        ninos: data.ninos,
+      });
+    }
+
+    if (user === 'conductor') {
+      navigation.setOptions({ headerTitle: 'Hotel Los Balcones - Conductor' });
+      navigation.navigate('RegistrarServicio', {
+        id: 1,
+      });
+      setUserData({
+        id: data.id,
+        name: data.name,
+        adultos: data.adultos,
+        ninos: data.ninos,
+      });
+    }
   }, []);
 
   const handleSearch = async () => {
     const map = mapRef.current;
 
-    // buscar ubicacion del turista por coordenadas
+    // Obtener calle donde se encuentra el turista por coordenadas
     const { latitude, longitude } = location;
     const response = await searchPlaceByCoordinates({ latitude, longitude });
     setLocationLabel(response.location.split(',')[0]);
 
-    // buscar ubicacion que ingreso el turista
+    // Buscar ubicacion que ingreso el turista
     const coordinates = await searchPlaceByText(searchText);
 
     setDestination({
@@ -103,11 +106,11 @@ const Map = ({ route }) => {
       longitudeDelta: 0.01,
     });
 
-    setShowDestinationMarker(true);
-    setIsVisible(true);
+    setDestinationMarkerVisible(true);
+    setModalVisible(true);
   };
 
-  const spawnMarker = () => {
+  const destinationMarker = () => {
     return (
       <Marker
         coordinate={destination}
@@ -118,31 +121,86 @@ const Map = ({ route }) => {
     );
   };
 
-  const toggleTrackerPositions = () => {
-    if (!showTrackerPositions) {
-      setShowTrackerPositions(true);
-    } else {
-      setShowTrackerPositions(false);
-    }
-    setTrackerCoordinates((prevState) => ({
-      latitude: prevState.latitude + 0.0001,
-      longitude: prevState.longitude + 0.00004,
-    }));
+  const [driverCoordinates, setDriverCoordinates] = useState({
+    latitude: -16.399884822698212,
+    longitude: -71.53550966370722,
+  });
+
+  const getDriverPosition = () => {
+    let intervalRef;
+
+    // cuando se llama esta funcion se actualiza las coordenadas del conductor, hacer que cuando se ejecute esta funcion se actualize iterativamente
+    const startInterval = async () => {
+      try {
+        const data = await getTransportPositions();
+        let updatedLatitude = data[data.length - 1].Position[1];
+        let updatedLongitude = data[data.length - 1].Position[0];
+
+        setDriverCoordinates(() => ({ latitude: updatedLatitude, longitude: updatedLongitude }));
+      } catch (error) {
+        alert('coudnt fetch driver position :(');
+      }
+
+      // intervalRef = setInterval(() => {
+      //   setDriverCoordinates((prevState) => ({ ...prevState, latitude: prevState.latitude + 0.0001, longitude: prevState.longitude + 0.00004 }));
+      // }, 1000);
+    };
+
+    const stopInterval = () => {
+      clearInterval(intervalRef);
+      console.log('Intervalo detenido');
+    };
+
+    Alert.alert(
+      'Servicio',
+      'ubicacion',
+      [
+        {
+          text: 'Aceptar',
+          onPress: () => startInterval(),
+        },
+        {
+          text: 'Cancelar',
+          onPress: () => stopInterval(),
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
-  const getTrackerPositions = () => {
-    return <Marker coordinate={trackerCoordinates} />;
+  const callback = () => {
+    let counter = 0;
+    const intervalHandler = async () => {
+      if (counter === 5) {
+        clearInterval(interval);
+        console.log('interval complete');
+      } else {
+        try {
+          const data = await getTransportPositions();
+          let updatedLatitude = data[data.length - 1].Position[1];
+          let updatedLongitude = data[data.length - 1].Position[0];
+
+          setDriverCoordinates(() => ({ latitude: updatedLatitude, longitude: updatedLongitude }));
+        } catch (error) {
+          alert('coudnt fetch driver position :(');
+        }
+      }
+
+      counter++;
+    };
+    const interval = setInterval(intervalHandler, 10000);
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent setIsVisible={setIsVisible} isVisible={isVisible} ubicacion={locationLabel} destino={searchText} userData={userData} />
+      <ModalComponent setModalVisible={setModalVisible} modalVisible={modalVisible} ubicacion={locationLabel} destino={searchText} userData={userData} />
       {user === 'turista' && (
         <View style={styles.container}>
-          <Text style={styles.text} onPress={() => setInterval(toggleTrackerPositions, 500)}>
+          <Text style={styles.text} onPress={() => callback()}>
             Hello {userData.name}!
           </Text>
-          <Text style={styles.text} onPress={() => setIsVisible(true)}>
+          <Text style={styles.text} onPress={() => setModalVisible(true)}>
             Where do you want to go?
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -154,41 +212,15 @@ const Map = ({ route }) => {
         </View>
       )}
       {locationLoaded && (
-        <MapView
-          ref={mapRef}
-          style={{ flex: user === 'turista' ? 0.7 : 1 }}
-          initialRegion={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
-          }}
-        >
-          <Marker
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-            title="Tu estas aqui"
-            description="Tu Ubicacion actual"
-          />
-          {showDestinationMarker && spawnMarker()}
-          {showTrackerPositions && getTrackerPositions()}
-          {/* {transportPositions.map((marker, index) => (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: marker.Position[0],
-                longitude: marker.Position[1],
-              }}
-              title="Your distination"
-              description="This is your destination location"
-            />
-          ))} */}
-          {/* {console.log(transportPositions[0].Position[0], transportPositions[0].Position[1])} */}
-
-          {/* <Polyline coordinates={[{ latitude: location.latitude, longitude: location.longitude }, destination]} strokeColor="#000" strokeWidth={2} /> */}
-        </MapView>
+        <MapComponent
+          location={location}
+          destinationMarkerVisible={destinationMarkerVisible}
+          destinationMarker={destinationMarker}
+          user={user}
+          mapRef={mapRef}
+          driverCoordinates={driverCoordinates}
+          driverMarkerIsVisible={driverMarkerIsVisible}
+        />
       )}
       {!locationLoaded && <Text>Activa tu ubicacion</Text>}
     </View>

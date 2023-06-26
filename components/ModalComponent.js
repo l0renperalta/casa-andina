@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Modal } from 'react-native';
+import { StyleSheet, Text, View, Modal, TouchableWithoutFeedback } from 'react-native';
 import { registerService } from '../service';
 import { useNavigation } from '@react-navigation/native';
 
-const ModalComponent = ({ setIsVisible, isVisible, ubicacion, destino, userData }) => {
+const ModalComponent = ({ setModalVisible, modalVisible, ubicacion, destino, userData }) => {
   const navigation = useNavigation();
 
   const { adultos, ninos, id } = userData;
@@ -17,7 +17,7 @@ const ModalComponent = ({ setIsVisible, isVisible, ubicacion, destino, userData 
     });
 
     alert('servicio registrado!');
-    setIsVisible(false);
+    setModalVisible(false);
     // const fecha = new Date();
     // fecha.setHours(fecha.getHours());
     // console.log(fecha);
@@ -27,27 +27,33 @@ const ModalComponent = ({ setIsVisible, isVisible, ubicacion, destino, userData 
     navigation.navigate('RegistrarServicio', {
       id: id,
     });
-    setIsVisible(false);
+    setModalVisible(false);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   return (
-    <Modal animationType="slide" transparent={true} visible={isVisible}>
-      <View style={styles.modalContent}>
-        <View style={styles.titleContainer}>
-          <View flexDirection="row">
-            <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => adquireServiceHandler()}>
-              Adquirir servicio
-            </Text>
-            <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => reserveServiceHandler()}>
-              Reservar servicio
-            </Text>
+    <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      <TouchableWithoutFeedback onPress={closeModal}>
+        <View style={styles.modalContent}>
+          <View style={styles.titleContainer}>
+            <View flexDirection="row">
+              <Text style={styles.button} backgroundColor="#ffac1c" onPress={() => adquireServiceHandler()}>
+                Adquirir servicio
+              </Text>
+              <Text style={styles.button} backgroundColor="#88a4fc" onPress={() => reserveServiceHandler()}>
+                Reservar servicio
+              </Text>
+            </View>
           </View>
+          <Text style={styles.text}>Ubicacion: {ubicacion}</Text>
+          <Text style={styles.text}>Destino: {destino}</Text>
+          <Text style={styles.text}>Adultos: {adultos}</Text>
+          <Text style={styles.text}>Niños: {ninos}</Text>
         </View>
-        <Text style={styles.text}>Ubicacion: {ubicacion}</Text>
-        <Text style={styles.text}>Destino: {destino}</Text>
-        <Text style={styles.text}>Adultos: {adultos}</Text>
-        <Text style={styles.text}>Niños: {ninos}</Text>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

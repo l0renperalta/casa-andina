@@ -1,4 +1,4 @@
-const URI = 'http://192.168.1.2:5000/';
+const URI = 'http://192.168.1.6:5000/';
 
 // Turista
 export const uploadImageToCollection = async (formatedImage) => {
@@ -90,6 +90,25 @@ export const getAvalibleServices = async () => {
   return await response.json();
 };
 
+export const sendTransportLocation = async (coordinates) => {
+  const response = await fetch(URI + 'updateTransportLocation', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(coordinates),
+  });
+  await response.json();
+};
+
+export const getTransportPositions = async () => {
+  const response = await fetch(URI + 'getPositions', {
+    method: 'GET',
+  });
+  const { positions } = await response.json();
+  return positions;
+};
+
 // Login tourest
 export const loginTourist = async (data) => {
   const response = await fetch(URI + 'login', {
@@ -100,13 +119,4 @@ export const loginTourist = async (data) => {
     body: JSON.stringify(data),
   });
   return await response.json();
-};
-
-// AWS LOCATION Get Transport locations
-export const getTransportPositions = async () => {
-  const response = await fetch(URI + 'getPositions', {
-    method: 'GET',
-  });
-  const { positions } = await response.json();
-  return positions;
 };

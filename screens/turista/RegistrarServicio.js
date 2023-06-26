@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View, TextInput, Alert } from 'react-native';
-import { useState, useRef, useEffect } from 'react';
-import { getAvalibleServices, registerService } from '../../service';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { getAvalibleServices, registerService, sendTransportLocation } from '../../service';
 import { useNavigation } from '@react-navigation/native';
+import useInterval from '../../useInterval';
+import { AppContext } from '../../AppContext';
 
-const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
+const RegistrarServicios = ({ route }) => {
   const id = route.params?.id;
 
   const navigation = useNavigation();
@@ -29,12 +31,8 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
     if (id) {
       navigation.setOptions({ headerTitle: 'Traslados disponibles' });
       setShowServices(true);
+      getAvalibleServices().then((data) => setServiciosDisponibles(data));
     }
-
-    (async () => {
-      const data = await getAvalibleServices();
-      setServiciosDisponibles(data);
-    })();
   }, []);
 
   const onChange = (name, input) => {
@@ -57,26 +55,44 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
     }
   };
 
-  const acceptServiceHandler = () => {
-    navigation.navigate('Home', {
-      type: {
-        id: 0,
-        name: '',
-        adultos: 0,
-        ninos: 0,
-      },
-    });
+  const transportCoordinates = {
+    latitude: -16.3997848226982,
+    longitude: -71.5354696637072,
+  };
+
+  const { serviceAccepted, setServiceAccepted } = useContext(AppContext);
+
+  const serviceHandler = async () => {
+    // useInterval(() => {
+    //   sendTransportLocation({
+    //     latitude: -16.399884822698212,
+    //     longitude: -71.53550966370722,
+    //   });
+    //   transportCoordinates.latitude += 0.0001;
+    //   transportCoordinates.longitude += 0.00004;
+    // }, 3000);
+
+    // ESTE ESTABA DESCOMENTADO, ESTABA USANDO ESTE CODIGO COMENTADO
+    setServiceAccepted(true);
+
+    let counter = 0;
+    const intervalHandler = () => {
+      if (counter === 5) {
+        clearInterval(interval);
+        console.log('interval complete');
+      } else {
+        sendTransportLocation({ latitude: transportCoordinates.latitude, longitude: transportCoordinates.longitude });
+        // console.log(transportCoordinates);
+      }
+      transportCoordinates.latitude += 0.0001;
+      transportCoordinates.longitude += 0.00004;
+      counter++;
+    };
+    const interval = setInterval(intervalHandler, 10000);
   };
 
   const serviceDetails = (id) => {
     const service = serviciosDisponibles.find((e) => e.id === id);
-
-    // navigation.navigate('Home', {
-    //   type: {
-    //     user: 'turista',
-    //     data: service,
-    //   },
-    // });
 
     Alert.alert(
       //title
@@ -84,10 +100,13 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
       //body
       'ubicacion: ' + service.ubicacion,
       [
-        { text: 'Aceptar', onPress: () => acceptServiceHandler() },
+        {
+          text: 'Aceptar',
+          onPress: () => serviceHandler(),
+        },
         {
           text: 'Cancelar',
-          onPress: () => console.log('No Pressed'),
+          onPress: () => console.log('Not accepted'),
           style: 'cancel',
         },
       ],
@@ -105,6 +124,9 @@ const RegistrarServicios = ({ route, toggleTrackerPositions }) => {
               <Text style={styles.button} onPress={() => serviceDetails(servicio.id)}>
                 Detalles
               </Text>
+              {/* <Text style={styles.button} onPress={() => serviceDetails(servicio.id)}>
+                Detalles
+              </Text> */}
             </View>
           ))}
         </>
