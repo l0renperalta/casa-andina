@@ -14,12 +14,8 @@ const CameraRoll = ({ route }) => {
     uri: '',
   };
 
-  const verifyFaceFound = () => {
-    if (data.faceFound) {
-      return alert('Conductor verificado!! :)');
-    } else {
-      return alert('Conductor no verificado :(');
-    }
+  const verifyFaceFound = async () => {
+    alert(data.faceFound ? 'Conductor verificado!! :)' : 'Conductor no verificado :(');
   };
 
   const renderPhotos = () => {

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Alert, Modal, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Alert, Image, Pressable } from 'react-native';
 import { useState, useEffect, useRef, useContext } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
@@ -39,8 +39,24 @@ const Map = ({ route }) => {
 
   // Global state
   const { serviceAccepted, setServiceAccepted } = useContext(AppContext);
+  const { serviceData, setServiceData } = useContext(AppContext);
 
   useEffect(() => {
+    navigation.addListener('focus', () => {
+      if (serviceData.displayModal) {
+        console.log(serviceData);
+        setModalVisible(true);
+
+        setServiceData({
+          displayModal: false,
+          ubicacion: '',
+          destino: '',
+          horaReserva: null,
+          niños: 0,
+          adultos: 0,
+        });
+      }
+    });
     // Check if service is accepted
     if (serviceAccepted) {
       setDriverMarkerIsVisible(true);
@@ -74,6 +90,7 @@ const Map = ({ route }) => {
       navigation.navigate('RegistrarServicio', {
         id: 1,
       });
+
       setUserData({
         id: data.id,
         name: data.name,
@@ -81,7 +98,7 @@ const Map = ({ route }) => {
         ninos: data.ninos,
       });
     }
-  }, []);
+  }, [navigation]);
 
   const handleSearch = async () => {
     const map = mapRef.current;
@@ -117,7 +134,9 @@ const Map = ({ route }) => {
         title="Este es tu destino"
         description="Esta es tu ubicacion de destino"
         onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
-      />
+      >
+        <Image source={require('./ubicacion2.png')} style={{ height: 30, width: 30 }} />
+      </Marker>
     );
   };
 
@@ -138,7 +157,7 @@ const Map = ({ route }) => {
 
         setDriverCoordinates(() => ({ latitude: updatedLatitude, longitude: updatedLongitude }));
       } catch (error) {
-        alert('coudnt fetch driver position :(');
+        alert('couldnt fetch driver position :(');
       }
 
       // intervalRef = setInterval(() => {
@@ -172,7 +191,7 @@ const Map = ({ route }) => {
   const callback = () => {
     let counter = 0;
     const intervalHandler = async () => {
-      if (counter === 5) {
+      if (counter === 10) {
         clearInterval(interval);
         console.log('interval complete');
       } else {
@@ -189,7 +208,7 @@ const Map = ({ route }) => {
 
       counter++;
     };
-    const interval = setInterval(intervalHandler, 10000);
+    const interval = setInterval(intervalHandler, 3000);
   };
 
   return (

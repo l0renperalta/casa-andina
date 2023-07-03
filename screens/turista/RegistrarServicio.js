@@ -60,24 +60,16 @@ const RegistrarServicios = ({ route }) => {
     longitude: -71.5354696637072,
   };
 
+  // Global Contexts
   const { serviceAccepted, setServiceAccepted } = useContext(AppContext);
+  const { serviceData, setServiceData } = useContext(AppContext);
 
-  const serviceHandler = async () => {
-    // useInterval(() => {
-    //   sendTransportLocation({
-    //     latitude: -16.399884822698212,
-    //     longitude: -71.53550966370722,
-    //   });
-    //   transportCoordinates.latitude += 0.0001;
-    //   transportCoordinates.longitude += 0.00004;
-    // }, 3000);
-
-    // ESTE ESTABA DESCOMENTADO, ESTABA USANDO ESTE CODIGO COMENTADO
+  const serviceHandler = async (service) => {
     setServiceAccepted(true);
 
     let counter = 0;
     const intervalHandler = () => {
-      if (counter === 5) {
+      if (counter === 10) {
         clearInterval(interval);
         console.log('interval complete');
       } else {
@@ -88,7 +80,18 @@ const RegistrarServicios = ({ route }) => {
       transportCoordinates.longitude += 0.00004;
       counter++;
     };
-    const interval = setInterval(intervalHandler, 10000);
+    const interval = setInterval(intervalHandler, 3000);
+
+    // console.log(service);
+    // setServiceData({
+    //   displayModal: true,
+    //   ubicacion: service.ubicacion,
+    //   destino: service.destino,
+    //   horaReserva: service.horaReserva,
+    //   niños: service.ninos,
+    //   adultos: service.adultos,
+    // });
+    // navigation.goBack();
   };
 
   const serviceDetails = (id) => {
@@ -102,11 +105,11 @@ const RegistrarServicios = ({ route }) => {
       [
         {
           text: 'Aceptar',
-          onPress: () => serviceHandler(),
+          onPress: () => serviceHandler(service),
         },
         {
           text: 'Cancelar',
-          onPress: () => console.log('Not accepted'),
+          onPress: () => console.log('No acceptado'),
           style: 'cancel',
         },
       ],
@@ -124,9 +127,6 @@ const RegistrarServicios = ({ route }) => {
               <Text style={styles.button} onPress={() => serviceDetails(servicio.id)}>
                 Detalles
               </Text>
-              {/* <Text style={styles.button} onPress={() => serviceDetails(servicio.id)}>
-                Detalles
-              </Text> */}
             </View>
           ))}
         </>
@@ -152,6 +152,15 @@ const RegistrarServicios = ({ route }) => {
     </View>
   );
 };
+
+// useInterval(() => {
+//   sendTransportLocation({
+//     latitude: -16.399884822698212,
+//     longitude: -71.53550966370722,
+//   });
+//   transportCoordinates.latitude += 0.0001;
+//   transportCoordinates.longitude += 0.00004;
+// }, 3000);
 
 export default RegistrarServicios;
 

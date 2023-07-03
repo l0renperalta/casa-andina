@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ImageBackground } from 'react-native';
 import { useState, useRef } from 'react';
 import { loginTourist } from '../service';
 
@@ -52,11 +52,18 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} ref={userRef} placeholder="Usuario" onChangeText={(text) => onChange('user', text)} />
-      <TextInput style={styles.input} ref={passwordRef} placeholder="Contraseña" onChangeText={(text) => onChange('password', text)} secureTextEntry={true} />
-      <Text style={styles.button} onPress={() => validateCredentials()}>
-        Ingresar
-      </Text>
+      <ImageBackground source={require('../screens/fondo.png')} style={styles.backgroundImage}>
+        <Text style={{ color: 'white', fontSize: 40, fontWeight: 'bold' }} onPress={() => validateCredentials()}>
+          HOTEL LOS BALCONES
+        </Text>
+        <View style={styles.form}>
+          <TextInput style={styles.input} ref={userRef} placeholder="Usuario" onChangeText={(text) => onChange('user', text)} />
+          <TextInput style={styles.input} ref={passwordRef} placeholder="Contraseña" onChangeText={(text) => onChange('password', text)} secureTextEntry={true} />
+          <Text style={styles.button} onPress={() => validateCredentials()}>
+            Ingresar
+          </Text>
+        </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -70,12 +77,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  backgroundImage: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%',
+  },
+  form: {
+    flex: 0.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '90%',
+  },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 20,
     color: 'white',
     backgroundColor: '#ffac1c',
+    fontSize: 17,
   },
   input: {
     borderRadius: 10,

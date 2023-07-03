@@ -46,7 +46,9 @@ const MapComponent = ({ user, location, destinationMarkerVisible, destinationMar
         }}
         title="Tu estas aqui"
         description="Tu Ubicacion actual"
-      />
+      >
+        <Image source={require('../screens/turista/ubicacion.png')} style={{ height: 30, width: 30 }} />
+      </Marker>
       {destinationMarkerVisible && destinationMarker()}
 
       {driverMarkerIsVisible && <DriverMarker driverCoordinates={driverCoordinates} />}

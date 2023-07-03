@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ImageBackground } from 'react-native';
 import { useState, useRef } from 'react';
 import { registerTourist } from '../../service';
 
@@ -24,14 +24,7 @@ const RegistrarTurista = () => {
   };
 
   const validateFieldsHandler = async () => {
-    if (
-      !turista.nombres ||
-      !turista.apellidos ||
-      !turista.dni ||
-      !turista.nacionalidad ||
-      !turista.niños ||
-      !turista.adultos
-    ) {
+    if (!turista.nombres || !turista.apellidos || !turista.dni || !turista.nacionalidad || !turista.niños || !turista.adultos) {
       alert('Complete los campos');
     } else {
       registerTourist(turista);
@@ -48,53 +41,41 @@ const RegistrarTurista = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombres"
-        onChangeText={(input) => onChange('nombres', input)}
-        ref={nombresRef}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Apellidos"
-        onChangeText={(input) => onChange('apellidos', input)}
-        ref={apellidosRef}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="DNI o carnet de extranjeria"
-        onChangeText={(input) => onChange('dni', input)}
-        numeric
-        keyboardType={'numeric'}
-        ref={dniRef}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Nacionalidad"
-        onChangeText={(input) => onChange('nacionalidad', input)}
-        ref={nacionalidadRef}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.smallInput}
-          placeholder="Niños"
-          onChangeText={(input) => onChange('niños', input)}
-          numeric
-          keyboardType={'numeric'}
-          ref={niñosRef}
-        />
-        <TextInput
-          style={styles.smallInput}
-          placeholder="Adultos"
-          onChangeText={(input) => onChange('adultos', input)}
-          numeric
-          keyboardType={'numeric'}
-          ref={adultosRef}
-        />
-      </View>
-      <Text style={styles.button} onPress={() => validateFieldsHandler()}>
-        Registrar Turista
-      </Text>
+      <ImageBackground source={require('../fondo.png')} style={styles.backgroundImage}>
+        <Text style={{ color: 'white', fontSize: 40, fontWeight: 'bold', marginBottom: 15 }} onPress={() => validateCredentials()}>
+          HOTEL LOS BALCONES
+        </Text>
+        <Text style={{ color: '#C0C0C0', fontSize: 15, fontWeight: 'bold', marginBottom: 15 }} onPress={() => validateCredentials()}>
+          Registrar Turista
+        </Text>
+        <View style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: 5, width: '85%' }}>
+          <TextInput style={styles.input} placeholder="Nombres" onChangeText={(input) => onChange('nombres', input)} ref={nombresRef} />
+          <TextInput style={styles.input} placeholder="Apellidos" onChangeText={(input) => onChange('apellidos', input)} ref={apellidosRef} />
+          <TextInput
+            style={styles.input}
+            placeholder="DNI o carnet de extranjeria"
+            onChangeText={(input) => onChange('dni', input)}
+            numeric
+            keyboardType={'numeric'}
+            ref={dniRef}
+          />
+          <TextInput style={styles.input} placeholder="Nacionalidad" onChangeText={(input) => onChange('nacionalidad', input)} ref={nacionalidadRef} />
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.smallInput} placeholder="Niños" onChangeText={(input) => onChange('niños', input)} numeric keyboardType={'numeric'} ref={niñosRef} />
+            <TextInput
+              style={styles.smallInput}
+              placeholder="Adultos"
+              onChangeText={(input) => onChange('adultos', input)}
+              numeric
+              keyboardType={'numeric'}
+              ref={adultosRef}
+            />
+          </View>
+        </View>
+        <Text style={styles.button} onPress={() => validateFieldsHandler()}>
+          Registrar Turista
+        </Text>
+      </ImageBackground>
     </View>
   );
 };
@@ -108,16 +89,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  backgroundImage: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
     color: 'white',
     backgroundColor: '#ffac1c',
+    fontSize: 15,
+    marginTop: 15,
   },
   input: {
-    borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
     borderColor: 'black',
     backgroundColor: 'white',
     padding: 10,
@@ -125,8 +116,10 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   smallInput: {
-    borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
     borderColor: 'black',
     backgroundColor: 'white',
     padding: 10,

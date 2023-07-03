@@ -6,7 +6,6 @@ const fs = require('fs');
 
 // recibir imagen y subirla a s3 y guardar facciones en las COLLECTIONS
 // Listar facciones guardar en las collections
-// aws rekognition list-faces --collection-id casa-andina-faces
 const indexFace = async (req, res) => {
   if (!req.files && !req.files.face) {
     res.json('no files uploaded');
@@ -112,3 +111,7 @@ module.exports = {
   indexFace,
   searchFace,
 };
+
+// aws rekognition list-faces --collection-id casa-andina-faces
+// aws rekognition create-collection --collection-id casa-andina-faces
+// aws rekognition delete-collection --collection-id casa-andina-faces
