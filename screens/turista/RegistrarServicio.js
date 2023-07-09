@@ -4,9 +4,14 @@ import { getAvalibleServices, registerService, sendTransportLocation } from '../
 import { useNavigation } from '@react-navigation/native';
 import useInterval from '../../useInterval';
 import { AppContext } from '../../AppContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const RegistrarServicios = ({ route }) => {
   const id = route.params?.id;
+  const ubicacion = route.params?.ubicacion;
+  const destino = route.params?.destino;
+  const adultos = route.params?.adultos;
+  const ninos = route.params?.ninos;
 
   const navigation = useNavigation();
   const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
@@ -27,6 +32,9 @@ const RegistrarServicios = ({ route }) => {
     adultos: 0,
   });
 
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+
   useEffect(() => {
     if (id) {
       navigation.setOptions({ headerTitle: 'Traslados disponibles' });
@@ -42,9 +50,11 @@ const RegistrarServicios = ({ route }) => {
   const validateFieldsHandler = async () => {
     if (!servicio.ubicacion || !servicio.destino || !servicio.horaReserva || !servicio.niños || !servicio.adultos) {
       alert('Complete los campos');
+      console.log(servicio);
     } else {
-      registerService(servicio);
+      servicio.id = id;
       // console.log(servicio);
+      registerService(servicio);
       alert('Servicio registrado exitosamente!!');
 
       ubicacionRef.current.clear();
@@ -96,12 +106,12 @@ const RegistrarServicios = ({ route }) => {
 
   const serviceDetails = (id) => {
     const service = serviciosDisponibles.find((e) => e.id === id);
-
+    console.log(service);
     Alert.alert(
       //title
-      'Servicio',
+      'Ubicacion: ' + service.ubicacion + ' - Destino: ' + service.destino,
       //body
-      'ubicacion: ' + service.ubicacion,
+      'Adultos: ' + service.adultos + ' - Niños: ' + service.ninos + ' - Hora: ' + service.hora_reserva,
       [
         {
           text: 'Aceptar',
@@ -142,8 +152,20 @@ const RegistrarServicios = ({ route }) => {
             keyboardType={'numeric'}
             ref={horaReservaRef}
           />
+          {/* <Text style={styles.button} onPress={() => setShowPicker(!showPicker)}>
+            Hora
+          </Text>
+          {showPicker && <DateTimePicker mode="time" display="spinner" value={date} />} */}
           <TextInput style={styles.input} placeholder="Niños" onChangeText={(input) => onChange('niños', input)} numeric keyboardType={'numeric'} ref={niñosRef} />
-          <TextInput style={styles.input} placeholder="Adultos" onChangeText={(input) => onChange('adultos', input)} numeric keyboardType={'numeric'} ref={adultosRef} />
+          <TextInput
+            style={styles.input}
+            placeholder="Adultos"
+            onChangeText={(input) => onChange('adultos', input)}
+            numeric
+            keyboardType={'numeric'}
+            ref={adultosRef}
+            // defaultValue={`${adultos}`}
+          />
           <Text style={styles.button} onPress={() => validateFieldsHandler()}>
             Registrar Servicio
           </Text>

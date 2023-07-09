@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TextInput, Alert, Image, Pressable } from 'reac
 import { useState, useEffect, useRef, useContext } from 'react';
 import * as Location from 'expo-location';
 import ModalComponent from '../../components/ModalComponent';
-import { getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
+import { getConductorData, getTransportPositions, searchPlaceByCoordinates, searchPlaceByText } from '../../service';
 import { useNavigation } from '@react-navigation/native';
 import MapComponent from '../../components/MapComponent';
 import { Marker } from 'react-native-maps';
@@ -60,20 +60,27 @@ const Map = ({ route }) => {
     // Check if service is accepted
     if (serviceAccepted) {
       setDriverMarkerIsVisible(true);
+      getConductorData().then((data) => {
+        Alert.alert(
+          //title
+          'Servicio aceptado por: ' + data.conductor.nombres + ' ' + data.conductor.apellidos,
+          //body
+          'Vehiculo color: ' + data.vehiculo.color + ' - Placa: ' + data.vehiculo.placa,
+          [
+            {
+              text: 'Aceptar',
+            },
+            {
+              text: 'Cancelar',
+              style: 'cancel',
+            },
+          ],
+          { cancelable: true }
+        );
+      });
       callback();
     }
-    // solicitando permisos de GPS al entrar
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('permiso denegado');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-      setLocationLoaded(true);
-    })();
+    getLocationOnLoad();
 
     if (user === 'turista') {
       navigation.setOptions({ headerTitle: 'Hotel Los Balcones' });
@@ -99,6 +106,18 @@ const Map = ({ route }) => {
       });
     }
   }, [navigation]);
+
+  const getLocationOnLoad = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('permiso denegado');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location.coords);
+    setLocationLoaded(true);
+  };
 
   const handleSearch = async () => {
     const map = mapRef.current;
@@ -145,48 +164,47 @@ const Map = ({ route }) => {
     longitude: -71.53550966370722,
   });
 
-  const getDriverPosition = () => {
-    let intervalRef;
+  // const getDriverPosition = () => {
+  //   let intervalRef;
 
-    // cuando se llama esta funcion se actualiza las coordenadas del conductor, hacer que cuando se ejecute esta funcion se actualize iterativamente
-    const startInterval = async () => {
-      try {
-        const data = await getTransportPositions();
-        let updatedLatitude = data[data.length - 1].Position[1];
-        let updatedLongitude = data[data.length - 1].Position[0];
+  //   const startInterval = async () => {
+  //     try {
+  //       const data = await getTransportPositions();
+  //       let updatedLatitude = data[data.length - 1].Position[1];
+  //       let updatedLongitude = data[data.length - 1].Position[0];
 
-        setDriverCoordinates(() => ({ latitude: updatedLatitude, longitude: updatedLongitude }));
-      } catch (error) {
-        alert('couldnt fetch driver position :(');
-      }
+  //       setDriverCoordinates(() => ({ latitude: updatedLatitude, longitude: updatedLongitude }));
+  //     } catch (error) {
+  //       alert('couldnt fetch driver position :(');
+  //     }
 
-      // intervalRef = setInterval(() => {
-      //   setDriverCoordinates((prevState) => ({ ...prevState, latitude: prevState.latitude + 0.0001, longitude: prevState.longitude + 0.00004 }));
-      // }, 1000);
-    };
+  //     // intervalRef = setInterval(() => {
+  //     //   setDriverCoordinates((prevState) => ({ ...prevState, latitude: prevState.latitude + 0.0001, longitude: prevState.longitude + 0.00004 }));
+  //     // }, 1000);
+  //   };
 
-    const stopInterval = () => {
-      clearInterval(intervalRef);
-      console.log('Intervalo detenido');
-    };
+  //   const stopInterval = () => {
+  //     clearInterval(intervalRef);
+  //     console.log('Intervalo detenido');
+  //   };
 
-    Alert.alert(
-      'Servicio',
-      'ubicacion',
-      [
-        {
-          text: 'Aceptar',
-          onPress: () => startInterval(),
-        },
-        {
-          text: 'Cancelar',
-          onPress: () => stopInterval(),
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  //   Alert.alert(
+  //     'Servicio',
+  //     'ubicacion',
+  //     [
+  //       {
+  //         text: 'Aceptar',
+  //         onPress: () => startInterval(),
+  //       },
+  //       {
+  //         text: 'Cancelar',
+  //         onPress: () => stopInterval(),
+  //         style: 'cancel',
+  //       },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
 
   const callback = () => {
     let counter = 0;

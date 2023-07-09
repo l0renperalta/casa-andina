@@ -1,4 +1,4 @@
-const URI = 'http://192.168.1.6:5000/';
+const URI = 'http://192.168.1.3:5000/';
 
 // Turista
 export const uploadImageToCollection = async (formatedImage) => {
@@ -52,6 +52,13 @@ export const registerService = async (values) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ values }),
+  });
+  return await response.json();
+};
+
+export const getConductorData = async () => {
+  const response = await fetch(URI + 'getConductorData', {
+    method: 'GET',
   });
   return await response.json();
 };

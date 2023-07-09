@@ -90,7 +90,7 @@ const searchFace = async (req, res) => {
 
     const { FaceMatches } = response;
     // comparando que las comparaciones sean mayores a 99.5 para que sea reconocido correctamente
-    const faceFound = FaceMatches.some((face) => face.Similarity > 99.5);
+    const faceFound = FaceMatches.some((face) => face.Similarity > 85.5);
 
     // si la propiedad FaceMatches es un arreglo vacio es por que no ese encontraron coincidencias
     if (FaceMatches.length > 1) {

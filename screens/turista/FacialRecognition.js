@@ -119,8 +119,8 @@ const FacialRecognition = () => {
             onPress={__startCamera}
             style={{
               width: 130,
-              borderRadius: 4,
-              backgroundColor: '#14274e',
+              borderRadius: 10,
+              backgroundColor: '#ffac1c',
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',

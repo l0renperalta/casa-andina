@@ -26,6 +26,10 @@ const ModalComponent = ({ setModalVisible, modalVisible, ubicacion, destino, use
   const reserveServiceHandler = () => {
     navigation.navigate('RegistrarServicio', {
       id: id,
+      ubicacion,
+      destino,
+      adultos,
+      ninos,
     });
     setModalVisible(false);
   };

@@ -56,7 +56,7 @@ CREATE TABLE servicio(
     ninos INT(15) NOT NULL,
     ubicacion VARCHAR(100) NOT NULL,
     destino VARCHAR(100) NOT NULL,
-    hora_reserva timestamp NOT NULL DEFAULT current_timestamp,
+    hora_reserva INT(15) NOT NULL,
     CONSTRAINT fk_turista FOREIGN KEY (turista_id) REFERENCES turistas(id)
 );
 
