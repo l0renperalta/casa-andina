@@ -9,13 +9,6 @@ import { Marker } from 'react-native-maps';
 import { AppContext } from '../../AppContext';
 
 const Map = ({ route }) => {
-  const { user, data } = route.params?.type;
-  const [userData, setUserData] = useState({
-    id: 0,
-    name: '',
-    adultos: 0,
-    ninos: 0,
-  });
   const navigation = useNavigation();
   const mapRef = useRef(null);
 
@@ -40,11 +33,21 @@ const Map = ({ route }) => {
   // Global state
   const { serviceAccepted, setServiceAccepted } = useContext(AppContext);
   const { serviceData, setServiceData } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
+  const { lastDestination, setLastDestination } = useContext(AppContext);
 
   useEffect(() => {
+    if (lastDestination.latitude !== 0 && lastDestination.longitude !== 0) {
+      setDestination({
+        latitude: lastDestination.latitude,
+        longitude: lastDestination.longitude,
+      });
+      setDestinationMarkerVisible(true);
+    }
+
     navigation.addListener('focus', () => {
       if (serviceData.displayModal) {
-        console.log(serviceData);
+        console.log('service data' + serviceData);
         setModalVisible(true);
 
         setServiceData({
@@ -57,7 +60,8 @@ const Map = ({ route }) => {
         });
       }
     });
-    // Check if service is accepted
+
+    // Mostrar datos del conductor
     if (serviceAccepted) {
       setDriverMarkerIsVisible(true);
       getConductorData().then((data) => {
@@ -80,29 +84,17 @@ const Map = ({ route }) => {
       });
       callback();
     }
+
     getLocationOnLoad();
 
-    if (user === 'turista') {
+    if (user.userType === 'turista') {
       navigation.setOptions({ headerTitle: 'Hotel Los Balcones' });
-      setUserData({
-        id: data.id,
-        name: data.name,
-        adultos: data.adultos,
-        ninos: data.ninos,
-      });
     }
 
-    if (user === 'conductor') {
+    if (user.userType === 'conductor') {
       navigation.setOptions({ headerTitle: 'Hotel Los Balcones - Conductor' });
       navigation.navigate('RegistrarServicio', {
         id: 1,
-      });
-
-      setUserData({
-        id: data.id,
-        name: data.name,
-        adultos: data.adultos,
-        ninos: data.ninos,
       });
     }
   }, [navigation]);
@@ -131,6 +123,10 @@ const Map = ({ route }) => {
     const coordinates = await searchPlaceByText(searchText);
 
     setDestination({
+      latitude: coordinates[1],
+      longitude: coordinates[0],
+    });
+    setLastDestination({
       latitude: coordinates[1],
       longitude: coordinates[0],
     });
@@ -231,11 +227,11 @@ const Map = ({ route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ModalComponent setModalVisible={setModalVisible} modalVisible={modalVisible} ubicacion={locationLabel} destino={searchText} userData={userData} />
-      {user === 'turista' && (
+      <ModalComponent setModalVisible={setModalVisible} modalVisible={modalVisible} ubicacion={locationLabel} destino={searchText} />
+      {user.userType === 'turista' && (
         <View style={styles.container}>
           <Text style={styles.text} onPress={() => callback()}>
-            Hello {userData.name}!
+            Hello {user.data.name}!
           </Text>
           <Text style={styles.text} onPress={() => setModalVisible(true)}>
             Where do you want to go?
@@ -259,7 +255,11 @@ const Map = ({ route }) => {
           driverMarkerIsVisible={driverMarkerIsVisible}
         />
       )}
-      {!locationLoaded && <Text>Activa tu ubicacion</Text>}
+      {!locationLoaded && (
+        <Text style={{ fontSize: 15, padding: 7 }} onPress={() => getLocationOnLoad()}>
+          Presione para actualizar interfaz
+        </Text>
+      )}
     </View>
   );
 };

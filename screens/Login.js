@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, TextInput, ImageBackground } from 'react-native';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { loginTourist } from '../service';
+import { AppContext } from '../AppContext';
 
 const Login = ({ navigation }) => {
   const [values, setValues] = useState({ user: '', password: '' });
   const userRef = useRef();
   const passwordRef = useRef();
+  const { user, setUser } = useContext(AppContext);
 
   const onChange = (name, text) => {
     setValues({ ...values, [name]: text });
@@ -18,8 +20,8 @@ const Login = ({ navigation }) => {
 
   const validateCredentials = async () => {
     const { message, data, userType } = await loginTourist(values);
+    setUser({ data: data, userType: userType });
 
-    // console.log(message, data, userType);
     if (values.user === '' && values.password === '') {
       alert('Complete los campos');
     } else {

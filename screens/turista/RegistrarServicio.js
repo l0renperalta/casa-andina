@@ -7,11 +7,7 @@ import { AppContext } from '../../AppContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const RegistrarServicios = ({ route }) => {
-  const id = route.params?.id;
-  const ubicacion = route.params?.ubicacion;
-  const destino = route.params?.destino;
-  const adultos = route.params?.adultos;
-  const ninos = route.params?.ninos;
+  const { user, setUser } = useContext(AppContext);
 
   const navigation = useNavigation();
   const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
@@ -24,7 +20,7 @@ const RegistrarServicios = ({ route }) => {
   const adultosRef = useRef();
 
   const [servicio, setServicio] = useState({
-    id: id,
+    id: user.data.id,
     ubicacion: '',
     destino: '',
     horaReserva: null,
@@ -36,7 +32,7 @@ const RegistrarServicios = ({ route }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    if (user.userType === 'conductor') {
       navigation.setOptions({ headerTitle: 'Traslados disponibles' });
       setShowServices(true);
       getAvalibleServices().then((data) => setServiciosDisponibles(data));
@@ -142,8 +138,8 @@ const RegistrarServicios = ({ route }) => {
         </>
       ) : (
         <>
-          <TextInput style={styles.input} placeholder="Ubicacion" onChangeText={(input) => onChange('ubicacion', input)} ref={ubicacionRef} />
-          <TextInput style={styles.input} placeholder="Destino" onChangeText={(input) => onChange('destino', input)} ref={destinoRef} />
+          <TextInput style={styles.input} placeholder="Ubicacion" onChangeText={(input) => onChange('ubicacion', input)} ref={ubicacionRef} editable={false} />
+          <TextInput style={styles.input} placeholder="Destino" onChangeText={(input) => onChange('destino', input)} ref={destinoRef} editable={false} />
           <TextInput
             style={styles.input}
             placeholder="Hora de reserva"
@@ -156,7 +152,15 @@ const RegistrarServicios = ({ route }) => {
             Hora
           </Text>
           {showPicker && <DateTimePicker mode="time" display="spinner" value={date} />} */}
-          <TextInput style={styles.input} placeholder="Niños" onChangeText={(input) => onChange('niños', input)} numeric keyboardType={'numeric'} ref={niñosRef} />
+          <TextInput
+            style={styles.input}
+            placeholder="Niños"
+            onChangeText={(input) => onChange('niños', input)}
+            numeric
+            keyboardType={'numeric'}
+            ref={niñosRef}
+            editable={false}
+          />
           <TextInput
             style={styles.input}
             placeholder="Adultos"
@@ -165,6 +169,7 @@ const RegistrarServicios = ({ route }) => {
             keyboardType={'numeric'}
             ref={adultosRef}
             // defaultValue={`${adultos}`}
+            editable={false}
           />
           <Text style={styles.button} onPress={() => validateFieldsHandler()}>
             Registrar Servicio

@@ -3,7 +3,6 @@ const router = express.Router();
 const pool = require('../connection');
 
 router.post('/registerService', async (req, res) => {
-  console.log(req.body);
   const { id, niños, adultos, ubicacion, destino, horaReserva } = req.body.values;
   const servicio = {
     turista_id: Number(id),

@@ -26,12 +26,21 @@ export const AppContextProvider = ({ children }) => {
     asientos: 0,
   });
 
-  const [userType, setUserType] = useState({
-    type: {
-      user: '',
-      data: {},
-    },
+  const [user, setUser] = useState({
+    data: {},
+    userType: '',
   });
 
-  return <AppContext.Provider value={{ serviceAccepted, setServiceAccepted, serviceData, setServiceData, driverData, setDriverData }}>{children}</AppContext.Provider>;
+  const [lastDestination, setLastDestination] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  return (
+    <AppContext.Provider
+      value={{ serviceAccepted, setServiceAccepted, serviceData, setServiceData, driverData, setDriverData, user, setUser, lastDestination, setLastDestination }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
 };

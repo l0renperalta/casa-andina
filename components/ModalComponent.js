@@ -1,35 +1,35 @@
 import { StyleSheet, Text, View, Modal, TouchableWithoutFeedback } from 'react-native';
 import { registerService } from '../service';
 import { useNavigation } from '@react-navigation/native';
+import { useContext } from 'react';
+import { AppContext } from '../AppContext';
 
-const ModalComponent = ({ setModalVisible, modalVisible, ubicacion, destino, userData }) => {
+const ModalComponent = ({ setModalVisible, modalVisible, ubicacion, destino }) => {
   const navigation = useNavigation();
 
-  const { adultos, ninos, id } = userData;
+  const { user, setUser } = useContext(AppContext);
 
   const adquireServiceHandler = () => {
     registerService({
-      id,
-      adultos,
-      niños: ninos,
+      id: user.data.id,
+      adultos: user.data.adultos,
+      niños: user.data.ninos,
       ubicacion,
       destino,
+      horaReserva: new Date().getHours(),
     });
 
     alert('servicio registrado!');
     setModalVisible(false);
-    // const fecha = new Date();
-    // fecha.setHours(fecha.getHours());
-    // console.log(fecha);
   };
 
   const reserveServiceHandler = () => {
     navigation.navigate('RegistrarServicio', {
-      id: id,
+      id: user.data.id,
+      adultos: user.data.adultos,
+      niños: user.data.ninos,
       ubicacion,
       destino,
-      adultos,
-      ninos,
     });
     setModalVisible(false);
   };
@@ -54,8 +54,8 @@ const ModalComponent = ({ setModalVisible, modalVisible, ubicacion, destino, use
           </View>
           <Text style={styles.text}>Ubicacion: {ubicacion}</Text>
           <Text style={styles.text}>Destino: {destino}</Text>
-          <Text style={styles.text}>Adultos: {adultos}</Text>
-          <Text style={styles.text}>Niños: {ninos}</Text>
+          <Text style={styles.text}>Adultos: {user.data.adultos}</Text>
+          <Text style={styles.text}>Niños: {user.data.ninos}</Text>
         </View>
       </TouchableWithoutFeedback>
     </Modal>

@@ -1,4 +1,4 @@
-const URI = 'http://192.168.1.3:5000/';
+const URI = 'http://192.168.1.8:5000/';
 
 // Turista
 export const uploadImageToCollection = async (formatedImage) => {
