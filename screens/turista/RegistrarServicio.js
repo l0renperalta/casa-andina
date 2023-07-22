@@ -44,13 +44,18 @@ const RegistrarServicios = ({ route }) => {
   };
 
   const validateFieldsHandler = async () => {
-    if (!servicio.ubicacion || !servicio.destino || !servicio.horaReserva || !servicio.niños || !servicio.adultos) {
+    if (!servicio.horaReserva) {
       alert('Complete los campos');
-      console.log(servicio);
     } else {
-      servicio.id = id;
-      // console.log(servicio);
-      registerService(servicio);
+      registerService({
+        id: user.data.id,
+        ubicacion: route.params.ubicacion,
+        destino: route.params.destino,
+        horaReserva: servicio.horaReserva,
+        niños: route.params.niños,
+        adultos: route.params.adultos,
+      });
+
       alert('Servicio registrado exitosamente!!');
 
       ubicacionRef.current.clear();
@@ -75,7 +80,7 @@ const RegistrarServicios = ({ route }) => {
 
     let counter = 0;
     const intervalHandler = () => {
-      if (counter === 10) {
+      if (counter === 15) {
         clearInterval(interval);
         console.log('interval complete');
       } else {
@@ -86,7 +91,7 @@ const RegistrarServicios = ({ route }) => {
       transportCoordinates.longitude += 0.00004;
       counter++;
     };
-    const interval = setInterval(intervalHandler, 3000);
+    const interval = setInterval(intervalHandler, 2500);
 
     // console.log(service);
     // setServiceData({
@@ -138,8 +143,8 @@ const RegistrarServicios = ({ route }) => {
         </>
       ) : (
         <>
-          <TextInput style={styles.input} placeholder="Ubicacion" onChangeText={(input) => onChange('ubicacion', input)} ref={ubicacionRef} editable={false} />
-          <TextInput style={styles.input} placeholder="Destino" onChangeText={(input) => onChange('destino', input)} ref={destinoRef} editable={false} />
+          <TextInput style={styles.input} placeholder="Ubicacion" ref={ubicacionRef} editable={false} defaultValue={`${route.params?.ubicacion}`} />
+          <TextInput style={styles.input} placeholder="Destino" ref={destinoRef} editable={false} defaultValue={`${route.params?.destino}`} />
           <TextInput
             style={styles.input}
             placeholder="Hora de reserva"
@@ -152,24 +157,15 @@ const RegistrarServicios = ({ route }) => {
             Hora
           </Text>
           {showPicker && <DateTimePicker mode="time" display="spinner" value={date} />} */}
-          <TextInput
-            style={styles.input}
-            placeholder="Niños"
-            onChangeText={(input) => onChange('niños', input)}
-            numeric
-            keyboardType={'numeric'}
-            ref={niñosRef}
-            editable={false}
-          />
+          <TextInput style={styles.input} placeholder="Niños" numeric keyboardType={'numeric'} ref={niñosRef} editable={false} defaultValue={`${route.params?.niños}`} />
           <TextInput
             style={styles.input}
             placeholder="Adultos"
-            onChangeText={(input) => onChange('adultos', input)}
             numeric
             keyboardType={'numeric'}
             ref={adultosRef}
-            // defaultValue={`${adultos}`}
             editable={false}
+            defaultValue={`${route.params?.adultos}`}
           />
           <Text style={styles.button} onPress={() => validateFieldsHandler()}>
             Registrar Servicio

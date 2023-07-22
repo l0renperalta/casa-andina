@@ -24,9 +24,10 @@ const searchPlaceByText = async (req, res) => {
 
       const input = {
         IndexName: 'casa-andina-index',
+        BiasPosition: [-71.53147220763623, -16.398995818103476],
         Text: req.body.place,
-        BiasPosition: [-71.5374, -16.409],
         FilterCountries: ['PER'],
+        MaxResults: 5,
       };
       const command = new SearchPlaceIndexForTextCommand(input);
       const response = await client.send(command);
