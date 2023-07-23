@@ -52,8 +52,8 @@ const RegistrarServicios = ({ route }) => {
         ubicacion: route.params.ubicacion,
         destino: route.params.destino,
         horaReserva: servicio.horaReserva,
-        niños: route.params.niños,
-        adultos: route.params.adultos,
+        niños: servicio.niños,
+        adultos: servicio.adultos,
       });
 
       alert('Servicio registrado exitosamente!!');
@@ -67,8 +67,8 @@ const RegistrarServicios = ({ route }) => {
   };
 
   const transportCoordinates = {
-    latitude: -16.3997848226982,
-    longitude: -71.5354696637072,
+    latitude: -16.373276908766456,
+    longitude: -71.50433274627933,
   };
 
   // Global Contexts
@@ -80,18 +80,20 @@ const RegistrarServicios = ({ route }) => {
 
     let counter = 0;
     const intervalHandler = () => {
-      if (counter === 15) {
+      if (counter === 20) {
         clearInterval(interval);
         console.log('interval complete');
       } else {
         sendTransportLocation({ latitude: transportCoordinates.latitude, longitude: transportCoordinates.longitude });
         // console.log(transportCoordinates);
       }
-      transportCoordinates.latitude += 0.0001;
-      transportCoordinates.longitude += 0.00004;
+      transportCoordinates.latitude += 0.0000217;
+      transportCoordinates.longitude += 0.000033;
       counter++;
     };
-    const interval = setInterval(intervalHandler, 2500);
+    const interval = setInterval(intervalHandler, 3000);
+
+    setServiciosDisponibles(serviciosDisponibles.filter((s) => s.id !== service.id));
 
     // console.log(service);
     // setServiceData({
@@ -108,6 +110,8 @@ const RegistrarServicios = ({ route }) => {
   const serviceDetails = (id) => {
     const service = serviciosDisponibles.find((e) => e.id === id);
     console.log(service);
+    console.log(serviciosDisponibles);
+
     Alert.alert(
       //title
       'Ubicacion: ' + service.ubicacion + ' - Destino: ' + service.destino,
@@ -157,16 +161,9 @@ const RegistrarServicios = ({ route }) => {
             Hora
           </Text>
           {showPicker && <DateTimePicker mode="time" display="spinner" value={date} />} */}
-          <TextInput style={styles.input} placeholder="Niños" numeric keyboardType={'numeric'} ref={niñosRef} editable={false} defaultValue={`${route.params?.niños}`} />
-          <TextInput
-            style={styles.input}
-            placeholder="Adultos"
-            numeric
-            keyboardType={'numeric'}
-            ref={adultosRef}
-            editable={false}
-            defaultValue={`${route.params?.adultos}`}
-          />
+          <TextInput style={styles.input} placeholder="Niños" numeric keyboardType={'numeric'} ref={niñosRef} onChangeText={(input) => onChange('niños', input)} />
+          <TextInput style={styles.input} placeholder="Adultos" numeric keyboardType={'numeric'} ref={adultosRef} onChangeText={(input) => onChange('adultos', input)} />
+
           <Text style={styles.button} onPress={() => validateFieldsHandler()}>
             Registrar Servicio
           </Text>

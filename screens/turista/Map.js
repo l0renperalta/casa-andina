@@ -156,8 +156,8 @@ const Map = ({ route }) => {
   };
 
   const [driverCoordinates, setDriverCoordinates] = useState({
-    latitude: -16.399884822698212,
-    longitude: -71.53550966370722,
+    latitude: -16.37367169424715,
+    longitude: -71.50492618206007,
   });
 
   // const getDriverPosition = () => {

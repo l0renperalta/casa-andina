@@ -41,8 +41,8 @@ const MapComponent = ({ user, location, destinationMarkerVisible, destinationMar
     >
       <Marker
         coordinate={{
-          latitude: -16.39709074556277,
-          longitude: -71.53657338404636,
+          latitude: location.latitude,
+          longitude: location.longitude,
         }}
         title="Tu estas aqui"
         description="Tu Ubicacion actual"
