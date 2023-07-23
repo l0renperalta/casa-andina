@@ -1,9 +1,10 @@
 import { StyleSheet, Button, Text, View, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import { searchFaceByImage, uploadImageToCollection } from '../../service';
+import { AppContext } from '../../AppContext';
 
 const CameraRoll = ({ route }) => {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions(true);
@@ -13,9 +14,10 @@ const CameraRoll = ({ route }) => {
     id: 0,
     uri: '',
   };
+  const { user, setUser } = useContext(AppContext);
 
   const verifyFaceFound = async () => {
-    alert(data.faceFound ? 'Conductor verificado!! :)' : 'Conductor no verificado :(');
+    console.log(data);
   };
 
   const renderPhotos = () => {
@@ -41,7 +43,7 @@ const CameraRoll = ({ route }) => {
             style={{
               width: 130,
               borderRadius: 4,
-              backgroundColor: '#14274e',
+              backgroundColor: '#ffac1c',
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
@@ -63,7 +65,7 @@ const CameraRoll = ({ route }) => {
             style={{
               width: 130,
               borderRadius: 4,
-              backgroundColor: '#14274e',
+              backgroundColor: '#ffac1c',
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
@@ -132,8 +134,21 @@ const CameraRoll = ({ route }) => {
 
       const data = await response.json();
       setData(data);
-      console.log(data);
-      verifyFaceFound();
+
+      if (user.userType === 'turista') {
+        if (data.faceFound) {
+          alert('Conductor verificado!! :)');
+        } else {
+          alert('Conductor no verificado :(');
+        }
+      }
+      if (user.userType === 'conductor') {
+        if (data.faceFound) {
+          alert('Turista verificado!! :)');
+        } else {
+          alert('Turista no verificado :(');
+        }
+      }
     } catch (error) {
       console.log('Error:', error);
     }

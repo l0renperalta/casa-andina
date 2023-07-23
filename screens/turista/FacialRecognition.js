@@ -35,6 +35,19 @@ const FacialRecognition = () => {
     __startCamera();
   };
 
+  // Flash
+  const [flashMode, setFlashMode] = useState('off');
+
+  const __handleFlashMode = () => {
+    if (flashMode === 'on') {
+      setFlashMode('off');
+    } else if (flashMode === 'off') {
+      setFlashMode('on');
+    } else {
+      setFlashMode('auto');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {startCamera ? (
@@ -54,6 +67,7 @@ const FacialRecognition = () => {
                 camera = r;
               }}
               type={CameraType.front}
+              flashMode={flashMode}
             >
               <View
                 style={{
@@ -72,6 +86,32 @@ const FacialRecognition = () => {
                     justifyContent: 'space-between',
                   }}
                 ></View>
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: '5%',
+                    top: '10%',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={__handleFlashMode}
+                    style={{
+                      backgroundColor: flashMode === 'off' ? '#000' : '#fff',
+                      height: 25,
+                      width: 25,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 20,
+                      }}
+                    >
+                      ⚡️
+                    </Text>
+                  </TouchableOpacity>
+                </View>
                 <View
                   style={{
                     position: 'absolute',
